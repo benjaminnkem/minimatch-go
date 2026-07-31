@@ -3,6 +3,8 @@ package minimatch
 import (
 	"regexp"
 	"strings"
+
+	"github.com/dlclark/regexp2"
 )
 
 // Minimatch is a compiled glob pattern for path matching.
@@ -41,10 +43,12 @@ type Minimatch struct {
 	// Set is compiled pattern rows (string | regexp | ** per segment).
 	Set [][]PatternPart
 
-	// makeRe cache: nil = not built, empty slice marker via makeReBuilt
-	makeReSrc   string
-	makeReOK    bool
-	makeReBuilt bool
+	// makeRe cache
+	makeReSrc    string
+	makeReOK     bool
+	makeReBuilt  bool
+	makeReUFlag  bool
+	makeReCached *regexp2.Regexp
 }
 
 // driveLetterRE matches a drive root segment like "C:".
@@ -204,19 +208,17 @@ func (m *Minimatch) parseSegment(pattern string) (PatternPart, bool) {
 
 	fast := fastPathTest(pattern, m.Options)
 	ast := ParseGlob(pattern, m.Options)
+	src := ast.ToRegExpSource(nil)
 	mm, err := ast.ToMMPattern()
 	if err != nil {
 		return PatternPart{}, false
 	}
 
 	if !mm.IsRE {
-		// literal
-		p := PatternPart{Str: mm.Literal}
-		// fast path not needed for pure literals usually
-		return p, true
+		return PatternPart{Str: mm.Literal, UFlag: src.UFlag}, true
 	}
 
-	p := PatternPart{HasMM: true, MM: mm}
+	p := PatternPart{HasMM: true, MM: mm, UFlag: src.UFlag}
 	if fast != nil {
 		p.Test = fast
 	}

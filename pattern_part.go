@@ -26,6 +26,22 @@ type PatternPart struct {
 	HasMM bool
 	// Test is an optional fast-path predicate replacing MM.Match.
 	Test func(string) bool
+	// UFlag is true when the segment source needs Unicode properties.
+	UFlag bool
+}
+
+// reSrc returns the unanchored regexp source for MakeRe assembly.
+func (p PatternPart) reSrc() string {
+	if p.IsGlobStar {
+		return ""
+	}
+	if p.HasMM && p.MM.IsRE {
+		return p.MM.Src
+	}
+	if p.HasMM {
+		return regexpEscape(p.MM.Literal)
+	}
+	return regexpEscape(p.Str)
 }
 
 // matchSegment reports whether fileSeg matches this pattern part.

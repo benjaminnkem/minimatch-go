@@ -35,7 +35,8 @@
 //	  ast_regexp.go               toRegExpSource / toMMPattern
 //	  minimatch.go / match.go / pattern_part.go
 //	                              compile + path matching
-//	  …                           future subsystems (makeRe, public API, …)
+//	  make_re.go / public.go      MakeRe, Filter, MatchList, Defaults
+//	  …                           differential tests, fuzz, bench (later)
 //
 // Future code stays in package minimatch unless a hard boundary appears
 // (for example a large brace-expansion implementation that benefits from
