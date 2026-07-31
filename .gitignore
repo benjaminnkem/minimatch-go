@@ -1,17 +1,13 @@
-# Binaries
+# Binaries / tests
 *.exe
-*.exe~
-*.dll
-*.so
-*.dylib
 *.test
 *.out
+/coverage.out
+/coverage.html
 
-# Go workspace / coverage
-/vendor/
-coverage.out
-coverage.html
-*.coverprofile
+# Fuzz / cache
+/testdata/fuzz/
+**/testdata/fuzz/
 
 # Editor / OS
 .DS_Store

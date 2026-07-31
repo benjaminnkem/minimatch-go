@@ -38,6 +38,7 @@
 //	  make_re.go / public.go      MakeRe, Filter, MatchList, Defaults
 //	  differential_test.go        Node patterns.js oracle
 //	  fuzz_test.go / benchmark_test.go
+//	  windows_test.go             win32/UNC behaviour via Options.Platform
 
 //
 // Future code stays in package minimatch unless a hard boundary appears
