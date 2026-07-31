@@ -9,9 +9,10 @@
 // # Status
 //
 // The port is built incrementally. The foundation layer provides shared
-// types, sentinel errors, and pattern validation. Matching, brace expansion,
-// character-class parsing, the extglob AST, and the public match APIs are
-// added in later steps.
+// types (including the full Options / MinimatchOptions model), sentinel
+// errors, pattern validation, and Escape/Unescape. Matching, brace
+// expansion, character-class parsing, the extglob AST, and the public match
+// APIs are added in later steps.
 //
 // # Package layout
 //
@@ -26,7 +27,9 @@
 //	  errors.go                   sentinel errors
 //	  validate.go                 pattern length / validity checks
 //	  escape.go / unescape.go     literal escape helpers
-//	  …                           future subsystems (brace expand, match, …)
+//	  token.go / scanner.go       path-segment lexical scan (#parseAST)
+//	  brace_expand.go / balanced.go  bash brace expansion
+//	  …                           future subsystems (AST, match, …)
 //
 // Future code stays in package minimatch unless a hard boundary appears
 // (for example a large brace-expansion implementation that benefits from
