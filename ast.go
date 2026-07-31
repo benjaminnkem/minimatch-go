@@ -61,6 +61,10 @@ type AST struct {
 	// Root-only bookkeeping for FillNegs (TypeScript #negs / #filledNegs).
 	negs       []*AST
 	filledNegs bool
+
+	// Compilation state (TypeScript #hasMagic / #uflag), updated by ToRegExpSource.
+	hasMagic bool
+	uFlag    bool
 }
 
 // ASTPart is one entry in an AST node’s Parts slice.
@@ -166,6 +170,10 @@ func (p *astParser) newNode(typ ExtglobType, parent *AST) *AST {
 	// TypeScript: if (type === '!' && !this.#root.#filledNegs) this.#negs.push(this)
 	if typ == ExtglobNegate && n.root != nil && !n.root.filledNegs {
 		n.root.negs = append(n.root.negs, n)
+	}
+	// Extglobs are inherently magical (TypeScript constructor).
+	if typ != 0 {
+		n.hasMagic = true
 	}
 	return n
 }
