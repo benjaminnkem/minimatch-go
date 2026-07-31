@@ -141,8 +141,9 @@ func fastPathTest(pattern string, opts Options) func(string) bool {
 	}
 
 	// /^\?+([^+@!?*[(]*)?$/
-	if qmarks, ext, ok := parseQmarks(pattern); ok {
-		return qmarksTest(qmarks, ext, opts)
+	// Length check uses full pattern length ($0.length in TS), not only ?.
+	if _, ext, ok := parseQmarks(pattern); ok {
+		return qmarksTest(pattern, ext, opts)
 	}
 
 	return nil
@@ -191,7 +192,10 @@ func parseQmarks(pattern string) (n int, ext string, ok bool) {
 	return i, ext, true
 }
 
-func qmarksTest(n int, ext string, opts Options) func(string) bool {
+// qmarksTest mirrors TS qmarksTest* using full pattern length as $0.length.
+func qmarksTest(pattern, ext string, opts Options) func(string) bool {
+	// JS String.length is UTF-16 code units; for these patterns (ASCII) byte len matches.
+	n := len(pattern)
 	base := func(f string) bool {
 		if opts.Dot {
 			return len(f) == n && f != "." && f != ".."

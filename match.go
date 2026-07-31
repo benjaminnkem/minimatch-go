@@ -285,7 +285,8 @@ func (m *Minimatch) matchGlobstar(
 		bodySegments[j].after = fileLength - (sum + len(bodySegments[j].parts))
 	}
 
-	return m.matchGSBody(file, bodySegments, fileIndex, 0, partial, 0, fileTailMatch != 0) != gsFalse
+	// TypeScript: return !!result — null and false are both non-matches.
+	return m.matchGSBody(file, bodySegments, fileIndex, 0, partial, 0, fileTailMatch != 0) == gsTrue
 }
 
 // gsResult mirrors TS boolean | null for globstar body recursion.
@@ -346,8 +347,11 @@ func (m *Minimatch) matchGSBody(
 		}
 		fileIndex++
 	}
+	// TypeScript: return partial || null
+	// When partial is true this is boolean true (!!true === true).
+	// When partial is false this is null (!!null === false).
 	if partial {
-		return gsNull
+		return gsTrue
 	}
 	return gsNull
 }

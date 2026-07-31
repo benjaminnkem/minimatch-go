@@ -330,23 +330,25 @@ func (n *AST) partsToRegExp(dot bool) string {
 }
 
 // parseGlob compiles a leaf glob text run (TypeScript AST.#parseGlob).
+// Iteration is by UTF-8 rune so multi-byte characters (e.g. "å") stay one unit.
 func parseGlob(glob string, hasMagic bool, noEmpty bool) RegExpSource {
 	escaping := false
 	var re strings.Builder
 	uflag := false
 	inStar := false
+	runes := []rune(glob)
 
-	for i := 0; i < len(glob); i++ {
-		c := glob[i]
+	for i := 0; i < len(runes); i++ {
+		r := runes[i]
 		if escaping {
 			escaping = false
-			if isReSpecial(c) {
+			if r < 128 && isReSpecial(byte(r)) {
 				re.WriteByte('\\')
 			}
-			re.WriteByte(c)
+			re.WriteRune(r)
 			continue
 		}
-		if c == '*' {
+		if r == '*' {
 			if inStar {
 				continue
 			}
@@ -361,31 +363,37 @@ func parseGlob(glob string, hasMagic bool, noEmpty bool) RegExpSource {
 		}
 		inStar = false
 
-		if c == '\\' {
-			if i == len(glob)-1 {
+		if r == '\\' {
+			if i == len(runes)-1 {
 				re.WriteString(`\\`)
 			} else {
 				escaping = true
 			}
 			continue
 		}
-		if c == '[' {
-			pc := parseClass(glob, i)
+		if r == '[' {
+			// parseClass uses byte indices into original string
+			byteIdx := len(string(runes[:i]))
+			pc := parseClass(glob, byteIdx)
 			if pc.Consumed > 0 {
 				re.WriteString(pc.Src)
 				uflag = uflag || pc.UFlag
-				// Consumed is UTF-16 length; for ASCII equals bytes.
-				i += pc.Consumed - 1
+				// Advance rune index by consumed UTF-16 units ≈ runes for BMP
+				consumed := string(runes[i:]) // from current
+				// Consume pc.Consumed UTF-16 code units from glob[byteIdx:]
+				adv := advanceRunesByUTF16(runes[i:], pc.Consumed)
+				i += adv - 1
 				hasMagic = hasMagic || pc.HasMagic
+				_ = consumed
 				continue
 			}
 		}
-		if c == '?' {
+		if r == '?' {
 			re.WriteString(reQmark)
 			hasMagic = true
 			continue
 		}
-		re.WriteString(regexpEscape(string(c)))
+		re.WriteString(regexpEscape(string(r)))
 	}
 
 	return RegExpSource{
@@ -394,6 +402,22 @@ func parseGlob(glob string, hasMagic bool, noEmpty bool) RegExpSource {
 		HasMagic: hasMagic,
 		UFlag:    uflag,
 	}
+}
+
+// advanceRunesByUTF16 returns how many runes cover n UTF-16 code units.
+func advanceRunesByUTF16(runes []rune, utf16Units int) int {
+	n := 0
+	units := 0
+	for n < len(runes) && units < utf16Units {
+		r := runes[n]
+		if r >= 0x10000 {
+			units += 2
+		} else {
+			units++
+		}
+		n++
+	}
+	return n
 }
 
 func isOnlyStars(glob string) bool {
