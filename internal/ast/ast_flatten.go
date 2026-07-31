@@ -1,6 +1,6 @@
 package ast
 
-import "github.com/tochison/minimatch/internal/scan"
+import "github.com/benjaminnkem/minimatch-go/internal/scan"
 
 // Flatten rewrites nested extglobs into equivalent shallower forms.
 //

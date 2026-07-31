@@ -1,6 +1,6 @@
 package minimatch
 
-import "github.com/tochison/minimatch/internal/ast"
+import "github.com/benjaminnkem/minimatch-go/internal/ast"
 
 // AST is the extglob syntax tree for a path segment.
 type AST = ast.AST

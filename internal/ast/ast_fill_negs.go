@@ -1,6 +1,6 @@
 package ast
 
-import "github.com/tochison/minimatch/internal/scan"
+import "github.com/benjaminnkem/minimatch-go/internal/scan"
 
 // FillNegs copies pattern tails into negative extglob alternatives.
 //

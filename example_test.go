@@ -3,7 +3,7 @@ package minimatch_test
 import (
 	"fmt"
 
-	"github.com/tochison/minimatch"
+	"github.com/benjaminnkem/minimatch-go"
 )
 
 func ExampleMatch() {

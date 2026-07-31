@@ -1,6 +1,6 @@
 package minimatch
 
-import "github.com/tochison/minimatch/internal/class"
+import "github.com/benjaminnkem/minimatch-go/internal/class"
 
 // ParseClassResult is the outcome of ParseClass.
 type ParseClassResult = class.ParseClassResult

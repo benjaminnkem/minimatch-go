@@ -2,9 +2,10 @@ package ast
 
 import (
 	"encoding/json"
-	"github.com/tochison/minimatch/internal/scan"
 	"reflect"
 	"testing"
+
+	"github.com/benjaminnkem/minimatch-go/internal/scan"
 )
 
 func TestParseGlobPlain(t *testing.T) {

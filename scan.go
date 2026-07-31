@@ -1,6 +1,6 @@
 package minimatch
 
-import "github.com/tochison/minimatch/internal/scan"
+import "github.com/benjaminnkem/minimatch-go/internal/scan"
 
 // Re-export scan types for advanced callers.
 type (

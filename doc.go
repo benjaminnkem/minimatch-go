@@ -8,7 +8,7 @@
 //
 // # Package layout
 //
-//	minimatch-go/                      module github.com/tochison/minimatch
+//	minimatch-go/                      module github.com/benjaminnkem/minimatch-go
 //	  *.go                             public API (package minimatch)
 //	  internal/
 //	    brace/                         bash brace expansion
@@ -18,7 +18,7 @@
 //	  testdata/                        Node oracles and fixtures
 //	  .github/workflows/               CI
 //
-// Callers import only github.com/tochison/minimatch. Implementation packages
+// Callers import only github.com/benjaminnkem/minimatch-go. Implementation packages
 // under internal/ are not part of the compatibility surface.
 //
 // The TypeScript tree under ../minimatch is the behavioural specification

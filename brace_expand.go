@@ -1,6 +1,6 @@
 package minimatch
 
-import "github.com/tochison/minimatch/internal/brace"
+import "github.com/benjaminnkem/minimatch-go/internal/brace"
 
 // ExpansionMax is the default brace expansion cardinality cap.
 const ExpansionMax = brace.ExpansionMax

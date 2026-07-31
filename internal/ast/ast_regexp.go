@@ -3,9 +3,9 @@ package ast
 import (
 	"strings"
 
+	"github.com/benjaminnkem/minimatch-go/internal/class"
+	"github.com/benjaminnkem/minimatch-go/internal/scan"
 	"github.com/dlclark/regexp2"
-	"github.com/tochison/minimatch/internal/class"
-	"github.com/tochison/minimatch/internal/scan"
 )
 
 // Regexp fragments used when compiling path-segment patterns.

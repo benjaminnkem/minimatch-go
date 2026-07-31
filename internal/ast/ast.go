@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"github.com/tochison/minimatch/internal/scan"
+	"github.com/benjaminnkem/minimatch-go/internal/scan"
 )
 
 // AST is the extglob syntax tree for a single path-segment pattern.
