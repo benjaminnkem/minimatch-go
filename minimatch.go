@@ -7,10 +7,8 @@ import (
 
 // Minimatch is a compiled glob pattern for path matching.
 //
-// Corresponds to the TypeScript Minimatch class through the make() pipeline
-// stages that produce GlobSet and GlobParts (validate, comment/empty,
-// negate, brace expand, slashSplit, preprocess). Segment compilation into
-// matchers (set) and path matching are later steps.
+// Corresponds to the TypeScript Minimatch class: validate, comment/empty,
+// negate, brace expand, slashSplit, preprocess, and per-segment parse into Set.
 type Minimatch struct {
 	// Options is the options bag used to build this pattern.
 	Options Options
@@ -40,19 +38,27 @@ type Minimatch struct {
 	GlobSet []string
 	// GlobParts is each GlobSet entry slash-split and preprocessed.
 	GlobParts [][]string
+	// Set is compiled pattern rows (string | regexp | ** per segment).
+	Set [][]PatternPart
+
+	// makeRe cache: nil = not built, empty slice marker via makeReBuilt
+	makeReSrc   string
+	makeReOK    bool
+	makeReBuilt bool
 }
 
 // driveLetterRE matches a drive root segment like "C:".
 var driveLetterRE = regexp.MustCompile(`(?i)^[a-z]:$`)
 
+// drivePrefixRE matches TS /^[a-z]:/i on a path segment.
+var drivePrefixRE = regexp.MustCompile(`(?i)^[a-z]:`)
+
 // uncLeadRE matches //host… for Windows UNC preservation in slashSplit.
 var uncLeadRE = regexp.MustCompile(`^//[^/]+`)
 
-// NewMinimatch validates pattern and runs the compile pipeline through
-// preprocess (GlobParts). It does not yet build per-segment matchers.
+// NewMinimatch validates pattern and fully compiles it for matching.
 //
-// Corresponds to `new Minimatch(pattern, options)` up to and including
-// this.globParts = this.preprocess(...).
+// Corresponds to `new Minimatch(pattern, options)`.
 func NewMinimatch(pattern string, opts Options) (*Minimatch, error) {
 	if err := ValidatePattern(pattern); err != nil {
 		return nil, err
@@ -76,18 +82,17 @@ func NewMinimatch(pattern string, opts Options) (*Minimatch, error) {
 		m.Pattern = strings.ReplaceAll(m.Pattern, `\`, `/`)
 	}
 
-	if err := m.makeThroughPreprocess(); err != nil {
+	if err := m.make(); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// makeThroughPreprocess runs comment/empty/negate/brace/split/preprocess.
-func (m *Minimatch) makeThroughPreprocess() error {
+// make runs the full TypeScript make() pipeline including segment parse.
+func (m *Minimatch) make() error {
 	pattern := m.Pattern
 	opts := m.Options
 
-	// empty patterns and comments match nothing.
 	if !opts.NoComment && len(pattern) > 0 && pattern[0] == '#' {
 		m.Comment = true
 		return nil
@@ -110,7 +115,112 @@ func (m *Minimatch) makeThroughPreprocess() error {
 		raw[i] = m.SlashSplit(s)
 	}
 	m.GlobParts = m.Preprocess(raw)
+
+	// glob → pattern parts
+	var set [][]PatternPart
+	for _, s := range m.GlobParts {
+		row, ok := m.parseRow(s)
+		if !ok {
+			continue // filter rows with false (failed parse)
+		}
+		set = append(set, row)
+	}
+	m.Set = set
+
+	// do not treat the ? in UNC paths as magic
+	if m.IsWindows {
+		for i := range m.Set {
+			p := m.Set[i]
+			if len(p) >= 4 && len(m.GlobParts[i]) >= 4 &&
+				p[0].isStringPart() && p[0].Str == "" &&
+				p[1].isStringPart() && p[1].Str == "" &&
+				m.GlobParts[i][2] == "?" &&
+				p[3].isStringPart() && driveLetterRE.MatchString(p[3].Str) {
+				m.Set[i][2] = PatternPart{Str: "?"}
+			}
+		}
+	}
 	return nil
+}
+
+// parseRow compiles one slash-split pattern. ok is false if any segment fails.
+func (m *Minimatch) parseRow(s []string) ([]PatternPart, bool) {
+	if m.IsWindows && m.WindowsNoMagicRoot && len(s) > 0 {
+		isUNC := len(s) >= 4 && s[0] == "" && s[1] == "" &&
+			(s[2] == "?" || !globMagic(s[2])) && !globMagic(s[3])
+		// TypeScript: /^[a-z]:/i.test(s[0])
+		isDrive := drivePrefixRE.MatchString(s[0])
+
+		if isUNC {
+			row := make([]PatternPart, 0, len(s))
+			for i := 0; i < 4 && i < len(s); i++ {
+				row = append(row, PatternPart{Str: s[i]})
+			}
+			for i := 4; i < len(s); i++ {
+				part, ok := m.parseSegment(s[i])
+				if !ok {
+					return nil, false
+				}
+				row = append(row, part)
+			}
+			return row, true
+		}
+		if isDrive {
+			row := []PatternPart{{Str: s[0]}}
+			for i := 1; i < len(s); i++ {
+				part, ok := m.parseSegment(s[i])
+				if !ok {
+					return nil, false
+				}
+				row = append(row, part)
+			}
+			return row, true
+		}
+	}
+
+	row := make([]PatternPart, 0, len(s))
+	for _, ss := range s {
+		part, ok := m.parseSegment(ss)
+		if !ok {
+			return nil, false
+		}
+		row = append(row, part)
+	}
+	return row, true
+}
+
+// parseSegment compiles one path portion (TypeScript Minimatch.parse).
+// ok is false only if compilation fails fatally (rare).
+func (m *Minimatch) parseSegment(pattern string) (PatternPart, bool) {
+	if err := ValidatePattern(pattern); err != nil {
+		return PatternPart{}, false
+	}
+	if pattern == "**" {
+		return PatternPart{IsGlobStar: true}, true
+	}
+	if pattern == "" {
+		return PatternPart{Str: ""}, true
+	}
+
+	fast := fastPathTest(pattern, m.Options)
+	ast := ParseGlob(pattern, m.Options)
+	mm, err := ast.ToMMPattern()
+	if err != nil {
+		return PatternPart{}, false
+	}
+
+	if !mm.IsRE {
+		// literal
+		p := PatternPart{Str: mm.Literal}
+		// fast path not needed for pure literals usually
+		return p, true
+	}
+
+	p := PatternPart{HasMM: true, MM: mm}
+	if fast != nil {
+		p.Test = fast
+	}
+	return p, true
 }
 
 // parseNegate strips leading ! characters and sets Negate.
