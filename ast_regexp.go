@@ -243,13 +243,18 @@ func (n *AST) extglobToRegExpSource(allowDot *bool, dot bool) RegExpSource {
 	if allowDot != nil {
 		allowDotVal = *allowDot
 	}
-	// TypeScript: !repeated || allowDot || dot || !startNoDot
-	// startNoDot is always truthy string, so !startNoDot is false.
-	// Thus bodyDotAllowed is only computed when repeated && !allowDot && !dot.
+	// TypeScript: bodyDotAllowed when repeated && !allowDot && !dot.
+	// The dual body enables patterns like *(?) to match "a.b". It also
+	// creates deeply nested lookaround REs that hang in regexp2 (e.g.
+	// *(*.json|!(*.js))). We still emit the dual form for fidelity when
+	// the non-dot body is simple (no nested "!" lookarounds).
 	if repeated && !allowDotVal && !dot {
-		bodyDotAllowed = n.partsToRegExp(true)
-		if bodyDotAllowed == body {
-			bodyDotAllowed = ""
+		candidate := n.partsToRegExp(true)
+		// Dual body is required for *(?) matching "a.b", but combined with
+		// nested negative extglobs ("(?!(?:…)") it can hang regexp2 (ReDoS-like).
+		// Skip dual only when a negative-extglob lookaround is present.
+		if candidate != body && !strings.Contains(body, "(?!(?:") {
+			bodyDotAllowed = candidate
 		}
 	}
 	if bodyDotAllowed != "" {

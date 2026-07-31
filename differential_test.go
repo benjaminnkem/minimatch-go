@@ -149,31 +149,49 @@ func TestDifferentialPatterns(t *testing.T) {
 	t.Logf("ok: %d cases match Node minimatch.match", len(cases))
 }
 
-// TestDifferentialTrickyNegations covers test/tricky-negations.js style cases.
+// TestDifferentialTrickyNegations loads the full test/tricky-negations.js
+// corpus (nonegate: true) from testdata/tricky_negations.json.
 func TestDifferentialTrickyNegations(t *testing.T) {
-	// Subset of tricky-negations.js (filename → pattern → expect)
-	// Using NoNegate where patterns start with !( for extglob.
+	_, file, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("runtime.Caller")
+	}
+	path := filepath.Join(filepath.Dir(file), "testdata", "tricky_negations.json")
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
 	type row struct {
-		file, pat string
-		opts      Options
-		want      bool
+		File     string `json:"file"`
+		Pattern  string `json:"pattern"`
+		Want     bool   `json:"want"`
+		Nonegate bool   `json:"nonegate"`
 	}
-	cases := []row{
-		{"bar.min.js", "*.!(js|css)", Options{NoNegate: true}, true},
-		{"bar.min.js", "*.+(js|css)", Options{}, true},
-		{"a-integration-test.js", "*-!(integration-)test.js", Options{NoNegate: true}, true},
-		{"a-integration-test.js", "!(*-integration-test.js)", Options{NoNegate: true}, false},
-		{"foo.jszzz.js", "*.!(js).js", Options{NoNegate: true}, true},
+	var cases []row
+	if err := json.Unmarshal(data, &cases); err != nil {
+		t.Fatal(err)
 	}
+	var failed int
 	for _, c := range cases {
-		ok, err := Match(c.file, c.pat, c.opts)
-		if err != nil {
-			t.Fatal(err)
+		opts := Options{}
+		if c.Nonegate {
+			opts.NoNegate = true
 		}
-		if ok != c.want {
-			t.Errorf("%q %q: got %v want %v", c.file, c.pat, ok, c.want)
+		got, err := Match(c.File, c.Pattern, opts)
+		if err != nil {
+			t.Errorf("%q %q: %v", c.File, c.Pattern, err)
+			failed++
+			continue
+		}
+		if got != c.Want {
+			failed++
+			t.Errorf("%q %q: got %v want %v", c.File, c.Pattern, got, c.Want)
 		}
 	}
+	if failed > 0 {
+		t.Fatalf("%d / %d tricky-negations cases failed", failed, len(cases))
+	}
+	t.Logf("ok: %d tricky-negations cases", len(cases))
 }
 
 // TestDifferentialPartial covers test/partial.ts style cases.

@@ -115,6 +115,16 @@ go test -run FuzzDifferentialBatch -v
 - Segment regexps and `MakeRe` use [regexp2](https://github.com/dlclark/regexp2) so lookarounds from the TS sources work (stdlib RE2 does not).  
 - Pattern length is capped at 64KiB UTF-16 units (same as the reference).  
 
+## Development
+
+```bash
+make check          # vet + test + differential
+make bench
+make fuzz
+make fixtures       # regenerate Node oracle (needs ../minimatch)
+```
+
 ## License
 
-Blue Oak Model License 1.0.0 (aligned with upstream minimatch). See upstream `LICENSE.md` for the reference implementation.
+Blue Oak Model License 1.0.0 — see [`LICENSE.md`](./LICENSE.md).
+Aligned with upstream [isaacs/minimatch](https://github.com/isaacs/minimatch).

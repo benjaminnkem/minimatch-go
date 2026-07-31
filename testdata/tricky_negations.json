@@ -1,0 +1,278 @@
+[
+  {
+    "file": "bar.min.js",
+    "pattern": "*.!(js|css)",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "bar.min.js",
+    "pattern": "!*.+(js|css)",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "bar.min.js",
+    "pattern": "*.+(js|css)",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*.!(j)",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "!(*-integration-test.js)",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*-!(integration-)test.js",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*-!(integration)-test.js",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*!(-integration)-test.js",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*!(-integration-)test.js",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*!(integration)-test.js",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*!(integration-test).js",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*-!(integration-test).js",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*-!(integration-test.js)",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*-!(integra)tion-test.js",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*-integr!(ation)-test.js",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*-integr!(ation-t)est.js",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*-i!(ntegration-)test.js",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*i!(ntegration-)test.js",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*te!(gration-te)st.js",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*-!(integration)?test.js",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "a-integration-test.js",
+    "pattern": "*?!(integration)?test.js",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "foo-integration-test.js",
+    "pattern": "foo-integration-test.js",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "foo-integration-test.js",
+    "pattern": "!(*-integration-test.js)",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "foo.jszzz.js",
+    "pattern": "*.!(js).js",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "asd.jss",
+    "pattern": "*.!(js)",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "asd.jss.xyz",
+    "pattern": "*.!(js).!(xy)",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "asd.jss.xy",
+    "pattern": "*.!(js).!(xy)",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "asd.js.xyz",
+    "pattern": "*.!(js).!(xy)",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "asd.js.xy",
+    "pattern": "*.!(js).!(xy)",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "asd.sjs.zxy",
+    "pattern": "*.!(js).!(xy)",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "asd..xyz",
+    "pattern": "*.!(js).!(xy)",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "asd..xy",
+    "pattern": "*.!(js).!(xy)",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "asd..xy",
+    "pattern": "*.!(js|x).!(xy)",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "foo.js.js",
+    "pattern": "*.!(js)",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "testjson.json",
+    "pattern": "*(*.json|!(*.js))",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "testjson.json",
+    "pattern": "+(*.json|!(*.js))",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "testjson.json",
+    "pattern": "@(*.json|!(*.js))",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "testjson.json",
+    "pattern": "?(*.json|!(*.js))",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "foojs.js",
+    "pattern": "*(*.json|!(*.js))",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "foojs.js",
+    "pattern": "+(*.json|!(*.js))",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "foojs.js",
+    "pattern": "@(*.json|!(*.js))",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "foojs.js",
+    "pattern": "?(*.json|!(*.js))",
+    "want": false,
+    "nonegate": true
+  },
+  {
+    "file": "other.bar",
+    "pattern": "*(*.json|!(*.js))",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "other.bar",
+    "pattern": "+(*.json|!(*.js))",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "other.bar",
+    "pattern": "@(*.json|!(*.js))",
+    "want": true,
+    "nonegate": true
+  },
+  {
+    "file": "other.bar",
+    "pattern": "?(*.json|!(*.js))",
+    "want": true,
+    "nonegate": true
+  }
+]

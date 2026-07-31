@@ -40,7 +40,6 @@
 //	  fuzz_test.go / benchmark_test.go
 //	  windows_test.go             win32/UNC behaviour via Options.Platform
 
-//
 // Future code stays in package minimatch unless a hard boundary appears
 // (for example a large brace-expansion implementation that benefits from
 // internal/ isolation). Subpackages are not introduced pre-emptively.
