@@ -1,4 +1,4 @@
-module github.com/tochison/minimatch
+module github.com/benjaminnkem/minimatch-go
 
 go 1.23
 
