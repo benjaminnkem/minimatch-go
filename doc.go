@@ -36,7 +36,9 @@
 //	  minimatch.go / match.go / pattern_part.go
 //	                              compile + path matching
 //	  make_re.go / public.go      MakeRe, Filter, MatchList, Defaults
-//	  …                           differential tests, fuzz, bench (later)
+//	  differential_test.go        Node patterns.js oracle
+//	  fuzz_test.go / benchmark_test.go
+
 //
 // Future code stays in package minimatch unless a hard boundary appears
 // (for example a large brace-expansion implementation that benefits from
