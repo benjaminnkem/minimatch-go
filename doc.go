@@ -33,7 +33,8 @@
 //	                              extglob AST, flatten, negative tails
 //	  parse_class.go              [character classes] + POSIX
 //	  ast_regexp.go               toRegExpSource / toMMPattern
-//	  …                           future subsystems (path pipeline, match, …)
+//	  minimatch.go                pattern pipeline → GlobParts
+//	  …                           future subsystems (segment set, match, …)
 //
 // Future code stays in package minimatch unless a hard boundary appears
 // (for example a large brace-expansion implementation that benefits from
