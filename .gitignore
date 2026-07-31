@@ -1,0 +1,21 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace / coverage
+/vendor/
+coverage.out
+coverage.html
+*.coverprofile
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
