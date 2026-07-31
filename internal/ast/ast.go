@@ -1,4 +1,8 @@
-package minimatch
+package ast
+
+import (
+	"github.com/tochison/minimatch/internal/scan"
+)
 
 // AST is the extglob syntax tree for a single path-segment pattern.
 //
@@ -42,7 +46,7 @@ package minimatch
 // expression (same order as TypeScript toRegExpSource).
 type AST struct {
 	// Type is the extglob operator, or 0 for a list node (TS type === null).
-	Type ExtglobType
+	Type scan.ExtglobType
 
 	// Parts is the ordered content of this node (see package comment).
 	Parts []ASTPart
@@ -51,7 +55,7 @@ type AST struct {
 	EmptyExt bool
 
 	// Options are the parse options from the root (shared by the tree).
-	Options Options
+	Options Config
 
 	parent      *AST
 	parentIndex int
@@ -123,15 +127,19 @@ func (n *AST) ID() int {
 // Corresponds to TypeScript AST.fromGlob(pattern, options):
 // scan structure with Scan, then build the tree. Does not flatten, fill
 // negative tails, or compile to a regular expression.
-func ParseGlob(pattern string, opts Options) *AST {
-	return ParseTokens(pattern, Scan(pattern, opts), opts)
+func ParseGlob(pattern string, opts Config) *AST {
+	max := opts.MaxExtglobRecursion
+	if max == 0 {
+		max = 2 // TypeScript default maxExtglobRecursion
+	}
+	return ParseTokens(pattern, scan.Scan(pattern, opts.NoExt, max), opts)
 }
 
 // ParseTokens builds an AST from tokens previously produced by Scan on src.
 //
 // src must be the same string that was scanned (used for unfinished-extglob
 // demotion spans). tokens should be Scan(src, opts).
-func ParseTokens(src string, tokens []Token, opts Options) *AST {
+func ParseTokens(src string, tokens []scan.Token, opts Config) *AST {
 	p := &astParser{
 		src:    src,
 		tokens: tokens,
@@ -145,13 +153,13 @@ func ParseTokens(src string, tokens []Token, opts Options) *AST {
 
 type astParser struct {
 	src    string
-	tokens []Token
+	tokens []scan.Token
 	i      int
-	opts   Options
+	opts   Config
 	nextID int
 }
 
-func (p *astParser) newNode(typ ExtglobType, parent *AST) *AST {
+func (p *astParser) newNode(typ scan.ExtglobType, parent *AST) *AST {
 	n := &AST{
 		Type:    typ,
 		Options: p.opts,
@@ -168,7 +176,7 @@ func (p *astParser) newNode(typ ExtglobType, parent *AST) *AST {
 		n.Options = parent.root.Options
 	}
 	// TypeScript: if (type === '!' && !this.#root.#filledNegs) this.#negs.push(this)
-	if typ == ExtglobNegate && n.root != nil && !n.root.filledNegs {
+	if typ == scan.ExtglobNegate && n.root != nil && !n.root.filledNegs {
 		n.root.negs = append(n.root.negs, n)
 	}
 	// Extglobs are inherently magical (TypeScript constructor).
@@ -184,15 +192,15 @@ func (p *astParser) parseSequence(into *AST) {
 	for p.i < len(p.tokens) {
 		tok := p.tokens[p.i]
 		switch tok.Kind {
-		case TokenText:
+		case scan.TokenText:
 			into.pushText(tok.Text)
 			p.i++
-		case TokenExtglobOpen:
+		case scan.TokenExtglobOpen:
 			open := tok
 			p.i++
-			child := p.parseExtglob(ExtglobType(open.Text[0]), into, open.Start)
+			child := p.parseExtglob(scan.ExtglobType(open.Text[0]), into, open.Start)
 			into.pushNode(child)
-		case TokenPipe, TokenExtglobClose:
+		case scan.TokenPipe, scan.TokenExtglobClose:
 			// Leave for the enclosing parseExtglob.
 			return
 		default:
@@ -203,7 +211,7 @@ func (p *astParser) parseSequence(into *AST) {
 
 // parseExtglob builds an extglob node. The ExtglobOpen token is already consumed.
 // openStart is the byte offset of the type character in src (for demotion).
-func (p *astParser) parseExtglob(typ ExtglobType, parent *AST, openStart int) *AST {
+func (p *astParser) parseExtglob(typ scan.ExtglobType, parent *AST, openStart int) *AST {
 	ext := p.newNode(typ, parent)
 	var alts []*AST
 
@@ -220,11 +228,11 @@ func (p *astParser) parseExtglob(typ ExtglobType, parent *AST, openStart int) *A
 
 		tok := p.tokens[p.i]
 		switch tok.Kind {
-		case TokenPipe:
+		case scan.TokenPipe:
 			p.i++
 			alts = append(alts, alt)
 			continue
-		case TokenExtglobClose:
+		case scan.TokenExtglobClose:
 			p.i++
 			// emptyExt: first body empty and no alternatives completed yet
 			// (TypeScript: acc === '' && ast.#parts.length === 0).
@@ -352,7 +360,7 @@ func (n *AST) ToJSON() any {
 	}
 	// TypeScript: if (isEnd && (root || (filledNegs && parent?.type === '!'))) push {}
 	if n.isEnd() {
-		if n == n.root || (n.root != nil && n.root.filledNegs && n.parent != nil && n.parent.Type == ExtglobNegate) {
+		if n == n.root || (n.root != nil && n.root.filledNegs && n.parent != nil && n.parent.Type == scan.ExtglobNegate) {
 			out = append(out, map[string]any{})
 		}
 	}
@@ -372,7 +380,7 @@ func (n *AST) isStart() bool {
 	}
 	for i := 0; i < n.parentIndex; i++ {
 		pp := n.parent.Parts[i]
-		if pp.Node == nil || pp.Node.Type != ExtglobNegate {
+		if pp.Node == nil || pp.Node.Type != scan.ExtglobNegate {
 			return false
 		}
 	}
@@ -384,7 +392,7 @@ func (n *AST) isEnd() bool {
 	if n.root == n {
 		return true
 	}
-	if n.parent != nil && n.parent.Type == ExtglobNegate {
+	if n.parent != nil && n.parent.Type == scan.ExtglobNegate {
 		return true
 	}
 	if n.parent == nil || !n.parent.isEnd() {

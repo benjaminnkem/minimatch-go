@@ -1,11 +1,11 @@
-package minimatch
+package ast
 
 import (
 	"testing"
 )
 
 func TestToRegExpSourceLiterals(t *testing.T) {
-	a := ParseGlob("foo", Options{})
+	a := ParseGlob("foo", Config{})
 	src := a.ToRegExpSource(nil)
 	if src.Re != "foo" || src.Body != "foo" || src.HasMagic {
 		t.Fatalf("%+v", src)
@@ -29,7 +29,7 @@ func TestToRegExpSourceLiterals(t *testing.T) {
 
 func TestToRegExpSourceStar(t *testing.T) {
 	// Reference: ["(?!\\.)[^/]+?","[^/]+?",true,false]
-	a := ParseGlob("*", Options{})
+	a := ParseGlob("*", Config{})
 	src := a.ToRegExpSource(nil)
 	if src.Re != `(?!\.)[^/]+?` {
 		t.Fatalf("Re=%q", src.Re)
@@ -56,7 +56,7 @@ func TestToRegExpSourceStar(t *testing.T) {
 
 func TestToRegExpSourceStarDot(t *testing.T) {
 	// Reference with dot: ["(?!(?:^|/)\\.\\.?(?:$|/))[^/]+?", ...]
-	a := ParseGlob("*", Options{Dot: true})
+	a := ParseGlob("*", Config{Dot: true})
 	src := a.ToRegExpSource(nil)
 	if src.Re != `(?!(?:^|/)\.\.?(?:$|/))[^/]+?` {
 		t.Fatalf("Re=%q", src.Re)
@@ -76,7 +76,7 @@ func TestToRegExpSourceStarDot(t *testing.T) {
 }
 
 func TestToRegExpSourceStarExt(t *testing.T) {
-	a := ParseGlob("*.js", Options{})
+	a := ParseGlob("*.js", Config{})
 	src := a.ToRegExpSource(nil)
 	if src.Re != `(?!\.)[^/]*?\.js` {
 		t.Fatalf("Re=%q", src.Re)
@@ -93,7 +93,7 @@ func TestToRegExpSourceStarExt(t *testing.T) {
 }
 
 func TestToRegExpSourceAStarB(t *testing.T) {
-	a := ParseGlob("a*b", Options{})
+	a := ParseGlob("a*b", Config{})
 	src := a.ToRegExpSource(nil)
 	if src.Re != `a[^/]*?b` {
 		t.Fatalf("Re=%q", src.Re)
@@ -101,7 +101,7 @@ func TestToRegExpSourceAStarB(t *testing.T) {
 }
 
 func TestToRegExpSourceQmark(t *testing.T) {
-	a := ParseGlob("?", Options{})
+	a := ParseGlob("?", Config{})
 	src := a.ToRegExpSource(nil)
 	if src.Re != `(?!\.)[^/]` {
 		t.Fatalf("Re=%q", src.Re)
@@ -109,7 +109,7 @@ func TestToRegExpSourceQmark(t *testing.T) {
 }
 
 func TestToRegExpSourceClass(t *testing.T) {
-	a := ParseGlob("[a-z]", Options{})
+	a := ParseGlob("[a-z]", Config{})
 	src := a.ToRegExpSource(nil)
 	if src.Re != `(?!\.)[a-z]` {
 		t.Fatalf("Re=%q", src.Re)
@@ -117,7 +117,7 @@ func TestToRegExpSourceClass(t *testing.T) {
 }
 
 func TestToRegExpSourcePosix(t *testing.T) {
-	a := ParseGlob("[[:alpha:]]", Options{})
+	a := ParseGlob("[[:alpha:]]", Config{})
 	src := a.ToRegExpSource(nil)
 	if src.Re != `(?!\.)[\p{L}\p{Nl}]` {
 		t.Fatalf("Re=%q", src.Re)
@@ -148,7 +148,7 @@ func TestToRegExpSourceExtglobs(t *testing.T) {
 		{"@(a)", `(?:a)`},
 	}
 	for _, tc := range cases {
-		a := ParseGlob(tc.pat, Options{})
+		a := ParseGlob(tc.pat, Config{})
 		src := a.ToRegExpSource(nil)
 		if src.Re != tc.re {
 			t.Errorf("%s: Re=%q want %q", tc.pat, src.Re, tc.re)
@@ -158,7 +158,7 @@ func TestToRegExpSourceExtglobs(t *testing.T) {
 
 func TestToRegExpSourceNegExtglob(t *testing.T) {
 	// Reference: (?:(?!(?:ab(?:$|\/)))(?!\.)[^/]*?)b
-	a := ParseGlob("!(a)b", Options{})
+	a := ParseGlob("!(a)b", Config{})
 	src := a.ToRegExpSource(nil)
 	want := `(?:(?!(?:ab(?:$|\/)))(?!\.)[^/]*?)b`
 	if src.Re != want {
@@ -180,7 +180,7 @@ func TestToRegExpSourceNegExtglob(t *testing.T) {
 
 func TestToRegExpSourceDots(t *testing.T) {
 	for _, p := range []string{".", ".."} {
-		a := ParseGlob(p, Options{})
+		a := ParseGlob(p, Config{})
 		mm, err := a.ToMMPattern()
 		if err != nil {
 			t.Fatal(err)
@@ -198,7 +198,7 @@ func TestToRegExpSourceDots(t *testing.T) {
 }
 
 func TestToMMPatternNonMagicClass(t *testing.T) {
-	a := ParseGlob("[_]", Options{})
+	a := ParseGlob("[_]", Config{})
 	mm, err := a.ToMMPattern()
 	if err != nil {
 		t.Fatal(err)
@@ -209,7 +209,7 @@ func TestToMMPatternNonMagicClass(t *testing.T) {
 }
 
 func TestToRegExpSourceEscapedStar(t *testing.T) {
-	a := ParseGlob(`\*`, Options{})
+	a := ParseGlob(`\*`, Config{})
 	src := a.ToRegExpSource(nil)
 	// escaped * is literal *
 	if src.HasMagic {
@@ -223,7 +223,7 @@ func TestToRegExpSourceEscapedStar(t *testing.T) {
 }
 
 func TestToMMPatternNocase(t *testing.T) {
-	a := ParseGlob("*.JS", Options{NoCase: true})
+	a := ParseGlob("*.JS", Config{NoCase: true})
 	mm, err := a.ToMMPattern()
 	if err != nil {
 		t.Fatal(err)
@@ -236,7 +236,7 @@ func TestToMMPatternNocase(t *testing.T) {
 
 func TestParseGlobOnlyStarsNoEmpty(t *testing.T) {
 	// whole pattern * uses +?
-	a := ParseGlob("**", Options{}) // as single segment text ** not globstar yet
+	a := ParseGlob("**", Config{}) // as single segment text ** not globstar yet
 	// Wait - ** in a segment is just two stars in text, coalesced to one star
 	src := a.ToRegExpSource(nil)
 	// noEmpty true, only stars → +?

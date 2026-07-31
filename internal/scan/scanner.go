@@ -1,4 +1,4 @@
-package minimatch
+package scan
 
 // Scan tokenizes a single path-segment pattern string.
 //
@@ -24,11 +24,13 @@ package minimatch
 // Unfinished extglobs (opening "*(" without a closing ")") produce an open
 // without a matching TokenExtglobClose. TypeScript demotes those to literal
 // text when building the AST; demotion is not applied here.
-func Scan(segment string, opts Options) []Token {
+// Scan tokenizes a path-segment pattern.
+// noExt disables extglobs; maxDepth is maxExtglobRecursion (use 2 for default).
+func Scan(segment string, noExt bool, maxDepth int) []Token {
 	s := &scanner{
 		src:      segment,
-		noExt:    opts.NoExt,
-		maxDepth: opts.EffectiveMaxExtglobRecursion(),
+		noExt:    noExt,
+		maxDepth: maxDepth,
 	}
 	s.scanRoot()
 	return s.tokens

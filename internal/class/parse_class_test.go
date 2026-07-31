@@ -1,4 +1,4 @@
-package minimatch
+package class
 
 import (
 	"strings"

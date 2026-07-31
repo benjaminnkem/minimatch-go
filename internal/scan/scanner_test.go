@@ -1,4 +1,4 @@
-package minimatch
+package scan
 
 import (
 	"reflect"
@@ -22,14 +22,14 @@ func texts(tokens []Token) []string {
 }
 
 func TestScanEmpty(t *testing.T) {
-	toks := Scan("", Options{})
+	toks := Scan("", false, 2)
 	if len(toks) != 0 {
 		t.Fatalf("got %v", toks)
 	}
 }
 
 func TestScanPlainLiteral(t *testing.T) {
-	toks := Scan("hello", Options{})
+	toks := Scan("hello", false, 2)
 	if len(toks) != 1 || toks[0].Kind != TokenText || toks[0].Text != "hello" {
 		t.Fatalf("%+v", toks)
 	}
@@ -40,7 +40,7 @@ func TestScanPlainLiteral(t *testing.T) {
 
 func TestScanGlobMagicStaysInText(t *testing.T) {
 	// #parseAST does not tokenize * or ? at this stage — only *( extglob.
-	toks := Scan("a*b?c", Options{})
+	toks := Scan("a*b?c", false, 2)
 	if len(toks) != 1 || toks[0].Kind != TokenText || toks[0].Text != "a*b?c" {
 		t.Fatalf("%+v", toks)
 	}
@@ -48,7 +48,7 @@ func TestScanGlobMagicStaysInText(t *testing.T) {
 
 func TestScanSimpleExtglob(t *testing.T) {
 	// foo*(a|b).js  — structural tokens like the AST shape
-	toks := Scan("foo*(a|b).js", Options{})
+	toks := Scan("foo*(a|b).js", false, 2)
 	wantKinds := []TokenKind{
 		TokenText, TokenExtglobOpen, TokenText, TokenPipe, TokenText, TokenExtglobClose, TokenText,
 	}
@@ -69,7 +69,7 @@ func TestScanSimpleExtglob(t *testing.T) {
 func TestScanAllExtglobTypes(t *testing.T) {
 	for _, typ := range []string{"!", "?", "+", "*", "@"} {
 		seg := typ + "(x)"
-		toks := Scan(seg, Options{})
+		toks := Scan(seg, false, 2)
 		if len(toks) != 3 {
 			t.Fatalf("%s: %+v", seg, toks)
 		}
@@ -86,7 +86,7 @@ func TestScanAllExtglobTypes(t *testing.T) {
 }
 
 func TestScanNoExtTreatsAsText(t *testing.T) {
-	toks := Scan("*(a|b)", Options{NoExt: true})
+	toks := Scan("*(a|b)", true, 2)
 	if len(toks) != 1 || toks[0].Kind != TokenText || toks[0].Text != "*(a|b)" {
 		t.Fatalf("%+v", toks)
 	}
@@ -94,7 +94,7 @@ func TestScanNoExtTreatsAsText(t *testing.T) {
 
 func TestScanEscapedExtglobNotOpened(t *testing.T) {
 	// \* ( is not an extglob start — backslash escape path
-	toks := Scan(`\*(a)`, Options{})
+	toks := Scan(`\*(a)`, false, 2)
 	if len(toks) != 1 || toks[0].Kind != TokenText {
 		t.Fatalf("%+v", toks)
 	}
@@ -106,13 +106,13 @@ func TestScanEscapedExtglobNotOpened(t *testing.T) {
 func TestScanCharClassOpaque(t *testing.T) {
 	// "[!a-z]*(" should not open extglob inside / after class incorrectly.
 	// Class [*(] keeps * ( opaque; no extglob.
-	toks := Scan("[*(]", Options{})
+	toks := Scan("[*(]", false, 2)
 	if len(toks) != 1 || toks[0].Text != "[*(]" {
 		t.Fatalf("%+v", toks)
 	}
 
 	// After class, extglob still works: [a]*(b)
-	toks = Scan("[a]*(b)", Options{})
+	toks = Scan("[a]*(b)", false, 2)
 	want := []TokenKind{TokenText, TokenExtglobOpen, TokenText, TokenExtglobClose}
 	if !reflect.DeepEqual(kinds(toks), want) {
 		t.Fatalf("%v %+v", kinds(toks), toks)
@@ -126,14 +126,14 @@ func TestScanEmptyClassAndNegation(t *testing.T) {
 	// [] is not a closed class on first ] in #parseAST — both brackets stay text
 	// and scanning continues. Actually: first ']', sawStart false, so not closed;
 	// sawStart becomes true; then if end, still inClass. Entire "[]" is text.
-	toks := Scan("[]", Options{})
+	toks := Scan("[]", false, 2)
 	if len(toks) != 1 || toks[0].Text != "[]" {
 		t.Fatalf("%+v", toks)
 	}
 
 	// []] — first ] after sawStart from... first ] doesn't close; sawStart true;
 	// second ] closes. Still all text one token.
-	toks = Scan("[]]", Options{})
+	toks = Scan("[]]", false, 2)
 	if len(toks) != 1 || toks[0].Text != "[]]" {
 		t.Fatalf("%+v", toks)
 	}
@@ -141,7 +141,7 @@ func TestScanEmptyClassAndNegation(t *testing.T) {
 
 func TestScanNestedExtglob(t *testing.T) {
 	// *(a|@(b|c))
-	toks := Scan("*(a|@(b|c))", Options{})
+	toks := Scan("*(a|@(b|c))", false, 2)
 	wantKinds := []TokenKind{
 		TokenExtglobOpen, // *
 		TokenText,        // a
@@ -163,7 +163,7 @@ func TestScanNestedExtglob(t *testing.T) {
 }
 
 func TestScanPipeAndCloseAtRootAreText(t *testing.T) {
-	toks := Scan("a|b)c", Options{})
+	toks := Scan("a|b)c", false, 2)
 	if len(toks) != 1 || toks[0].Text != "a|b)c" {
 		t.Fatalf("%+v", toks)
 	}
@@ -171,7 +171,7 @@ func TestScanPipeAndCloseAtRootAreText(t *testing.T) {
 
 func TestScanUnfinishedExtglob(t *testing.T) {
 	// *(a|b  — no close
-	toks := Scan("*(a|b", Options{})
+	toks := Scan("*(a|b", false, 2)
 	wantKinds := []TokenKind{TokenExtglobOpen, TokenText, TokenPipe, TokenText}
 	if !reflect.DeepEqual(kinds(toks), wantKinds) {
 		t.Fatalf("kinds=%v want %v %+v", kinds(toks), wantKinds, toks)
@@ -196,21 +196,21 @@ func TestScanMaxExtglobRecursion(t *testing.T) {
 	// So adoption keeps recognizing.
 	//
 	// maxDepth 0, pattern "*(x)" only: opens fine at depth 0.
-	toks := Scan("*(x)", Options{MaxExtglobRecursion: Int(0)})
+	toks := Scan("*(x)", false, 0)
 	if kinds(toks)[0] != TokenExtglobOpen {
 		t.Fatalf("depth 0 should still open first extglob: %+v", toks)
 	}
 
 	// With NoExt-equivalent via impossible depth: parent null cannot adopt,
 	// extDepth 0, maxDepth -1? Use MaxExtglobRecursion -1: 0 <= -1 false, no adopt at root.
-	toks = Scan("*(x)", Options{MaxExtglobRecursion: Int(-1)})
+	toks = Scan("*(x)", false, -1)
 	if len(toks) != 1 || toks[0].Kind != TokenText {
 		t.Fatalf("maxDepth -1 should not open: %+v", toks)
 	}
 }
 
 func TestScanMultipleExtglobs(t *testing.T) {
-	toks := Scan("*(a)@(b)", Options{})
+	toks := Scan("*(a)@(b)", false, 2)
 	want := []TokenKind{
 		TokenExtglobOpen, TokenText, TokenExtglobClose,
 		TokenExtglobOpen, TokenText, TokenExtglobClose,
@@ -222,7 +222,7 @@ func TestScanMultipleExtglobs(t *testing.T) {
 
 func TestScanEmptyExtglobBody(t *testing.T) {
 	// *() — empty body; TS sets #emptyExt. We emit Open, Close with no text between.
-	toks := Scan("*()", Options{})
+	toks := Scan("*()", false, 2)
 	want := []TokenKind{TokenExtglobOpen, TokenExtglobClose}
 	if !reflect.DeepEqual(kinds(toks), want) {
 		t.Fatalf("%v %+v", kinds(toks), toks)
@@ -231,7 +231,7 @@ func TestScanEmptyExtglobBody(t *testing.T) {
 
 func TestScanEmptyAlternative(t *testing.T) {
 	// *(a||b) — empty middle alternative
-	toks := Scan("*(a||b)", Options{})
+	toks := Scan("*(a||b)", false, 2)
 	want := []TokenKind{
 		TokenExtglobOpen, TokenText, TokenPipe, TokenPipe, TokenText, TokenExtglobClose,
 	}
@@ -262,7 +262,7 @@ func TestIsExtglobType(t *testing.T) {
 
 func TestScanSpansCoverSegment(t *testing.T) {
 	seg := "ab*(c|d)e"
-	toks := Scan(seg, Options{})
+	toks := Scan(seg, false, 2)
 	// Reconstruct by concatenating raw slices for structural tokens.
 	var rebuilt string
 	for _, tok := range toks {

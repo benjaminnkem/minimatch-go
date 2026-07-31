@@ -1,4 +1,6 @@
-package minimatch
+package ast
+
+import "github.com/tochison/minimatch/internal/scan"
 
 // FillNegs copies pattern tails into negative extglob alternatives.
 //
@@ -39,7 +41,7 @@ func (n *AST) FillNegs() *AST {
 	for len(root.negs) > 0 {
 		neg := root.negs[len(root.negs)-1]
 		root.negs = root.negs[:len(root.negs)-1]
-		if neg.Type != ExtglobNegate {
+		if neg.Type != scan.ExtglobNegate {
 			continue
 		}
 		p := neg

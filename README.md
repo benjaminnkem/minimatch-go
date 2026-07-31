@@ -109,6 +109,25 @@ Random differential cases (requires Node + built reference):
 go test -run FuzzDifferentialBatch -v
 ```
 
+## Layout
+
+```text
+minimatch-go/
+├── *.go                 # public API (package minimatch)
+├── internal/
+│   ├── brace/           # brace expansion
+│   ├── scan/            # segment tokenizer
+│   ├── class/           # character classes
+│   └── ast/             # extglob AST + segment compile
+├── testdata/            # Node oracles, fixtures
+├── .github/workflows/   # CI
+├── README.md
+├── LICENSE.md
+└── Makefile
+```
+
+Import only `github.com/tochison/minimatch`. The `internal/` packages are implementation details.
+
 ## Design notes
 
 - Matching uses segment-wise compare (literals, compiled segment patterns, `**`).  

@@ -1,13 +1,14 @@
-package minimatch
+package ast
 
 import (
 	"encoding/json"
+	"github.com/tochison/minimatch/internal/scan"
 	"reflect"
 	"testing"
 )
 
 func TestParseGlobPlain(t *testing.T) {
-	a := ParseGlob("foo", Options{})
+	a := ParseGlob("foo", Config{})
 	if !a.IsList() || len(a.Parts) != 1 || a.Parts[0].Text != "foo" {
 		t.Fatalf("%+v", a)
 	}
@@ -17,14 +18,14 @@ func TestParseGlobPlain(t *testing.T) {
 }
 
 func TestParseGlobStarStaysText(t *testing.T) {
-	a := ParseGlob("a*b?c", Options{})
+	a := ParseGlob("a*b?c", Config{})
 	if a.String() != "a*b?c" || len(a.Parts) != 1 {
 		t.Fatalf("%s parts=%+v", a.String(), a.Parts)
 	}
 }
 
 func TestParseGlobSimpleExtglob(t *testing.T) {
-	a := ParseGlob("*(a|b)", Options{})
+	a := ParseGlob("*(a|b)", Config{})
 	if a.String() != "*(a|b)" {
 		t.Fatal(a.String())
 	}
@@ -32,7 +33,7 @@ func TestParseGlobSimpleExtglob(t *testing.T) {
 		t.Fatalf("%+v", a.Parts)
 	}
 	ext := a.Parts[0].Node
-	if ext.Type != ExtglobStar || len(ext.Parts) != 2 {
+	if ext.Type != scan.ExtglobStar || len(ext.Parts) != 2 {
 		t.Fatalf("%+v", ext)
 	}
 	if ext.Parts[0].Node.String() != "a" || ext.Parts[1].Node.String() != "b" {
@@ -41,7 +42,7 @@ func TestParseGlobSimpleExtglob(t *testing.T) {
 }
 
 func TestParseGlobPrefixSuffix(t *testing.T) {
-	a := ParseGlob("a*(b)c", Options{})
+	a := ParseGlob("a*(b)c", Config{})
 	if a.String() != "a*(b)c" {
 		t.Fatal(a.String())
 	}
@@ -51,13 +52,13 @@ func TestParseGlobPrefixSuffix(t *testing.T) {
 	if a.Parts[0].Text != "a" || a.Parts[2].Text != "c" {
 		t.Fatalf("%+v", a.Parts)
 	}
-	if a.Parts[1].Node.Type != ExtglobStar {
+	if a.Parts[1].Node.Type != scan.ExtglobStar {
 		t.Fatal(a.Parts[1].Node.Type)
 	}
 }
 
 func TestParseGlobEmptyExt(t *testing.T) {
-	a := ParseGlob("*()", Options{})
+	a := ParseGlob("*()", Config{})
 	ext := a.Parts[0].Node
 	if !ext.EmptyExt {
 		t.Fatal("EmptyExt")
@@ -71,7 +72,7 @@ func TestParseGlobEmptyExt(t *testing.T) {
 }
 
 func TestParseGlobEmptyAlternatives(t *testing.T) {
-	a := ParseGlob("*(a||b)", Options{})
+	a := ParseGlob("*(a||b)", Config{})
 	ext := a.Parts[0].Node
 	if len(ext.Parts) != 3 {
 		t.Fatalf("alts %d", len(ext.Parts))
@@ -88,21 +89,21 @@ func TestParseGlobEmptyAlternatives(t *testing.T) {
 }
 
 func TestParseGlobNested(t *testing.T) {
-	a := ParseGlob("*(a|@(b|c))", Options{})
+	a := ParseGlob("*(a|@(b|c))", Config{})
 	if a.String() != "*(a|@(b|c))" {
 		t.Fatal(a.String())
 	}
 	ext := a.Parts[0].Node
 	inner := ext.Parts[1].Node.Parts[0].Node
-	if inner.Type != ExtglobOne || len(inner.Parts) != 2 {
+	if inner.Type != scan.ExtglobOne || len(inner.Parts) != 2 {
 		t.Fatalf("%+v", inner)
 	}
 }
 
 func TestParseGlobAllTypes(t *testing.T) {
-	for _, typ := range []ExtglobType{ExtglobNegate, ExtglobOptional, ExtglobPlus, ExtglobStar, ExtglobOne} {
+	for _, typ := range []scan.ExtglobType{scan.ExtglobNegate, scan.ExtglobOptional, scan.ExtglobPlus, scan.ExtglobStar, scan.ExtglobOne} {
 		p := string(typ) + "(x)"
-		a := ParseGlob(p, Options{})
+		a := ParseGlob(p, Config{})
 		if a.String() != p {
 			t.Fatalf("%s -> %s", p, a.String())
 		}
@@ -113,7 +114,7 @@ func TestParseGlobAllTypes(t *testing.T) {
 }
 
 func TestParseGlobNoExt(t *testing.T) {
-	a := ParseGlob("*(a|b)", Options{NoExt: true})
+	a := ParseGlob("*(a|b)", Config{NoExt: true})
 	if !a.IsList() || len(a.Parts) != 1 || a.Parts[0].Text != "*(a|b)" {
 		t.Fatalf("%+v", a)
 	}
@@ -121,7 +122,7 @@ func TestParseGlobNoExt(t *testing.T) {
 
 func TestParseGlobUnfinishedDemotion(t *testing.T) {
 	// TypeScript: *(a → root has one list child with text "*(a"
-	a := ParseGlob("*(a", Options{})
+	a := ParseGlob("*(a", Config{})
 	if a.String() != "*(a" {
 		t.Fatal(a.String())
 	}
@@ -135,7 +136,7 @@ func TestParseGlobUnfinishedDemotion(t *testing.T) {
 }
 
 func TestParseGlobUnfinishedOuterWipesNested(t *testing.T) {
-	a := ParseGlob("*(a|@(b", Options{})
+	a := ParseGlob("*(a|@(b", Config{})
 	if a.String() != "*(a|@(b" {
 		t.Fatal(a.String())
 	}
@@ -147,7 +148,7 @@ func TestParseGlobUnfinishedOuterWipesNested(t *testing.T) {
 }
 
 func TestParseGlobEscapedNotExtglob(t *testing.T) {
-	a := ParseGlob(`\*(a)`, Options{})
+	a := ParseGlob(`\*(a)`, Config{})
 	if a.String() != `\*(a)` {
 		t.Fatal(a.String())
 	}
@@ -157,7 +158,7 @@ func TestParseGlobEscapedNotExtglob(t *testing.T) {
 }
 
 func TestParseGlobClassKeepsExtglobOut(t *testing.T) {
-	a := ParseGlob("[*(]", Options{})
+	a := ParseGlob("[*(]", Config{})
 	if a.String() != "[*(]" || a.Parts[0].Node != nil {
 		t.Fatal(a.String())
 	}
@@ -165,8 +166,8 @@ func TestParseGlobClassKeepsExtglobOut(t *testing.T) {
 
 func TestParseTokensRoundTripWithScan(t *testing.T) {
 	src := "x@(a|b)y"
-	toks := Scan(src, Options{})
-	a := ParseTokens(src, toks, Options{})
+	toks := scan.Scan(src, false, 2)
+	a := ParseTokens(src, toks, Config{})
 	if a.String() != src {
 		t.Fatal(a.String())
 	}
@@ -187,7 +188,7 @@ func TestASTToJSONMatchesReferenceShapes(t *testing.T) {
 		"!(x)":        `[[],["!",[[],"x"]],{}]`,
 	}
 	for p, wantJSON := range cases {
-		a := ParseGlob(p, Options{})
+		a := ParseGlob(p, Config{})
 		got, err := json.Marshal(a.ToJSON())
 		if err != nil {
 			t.Fatal(err)
@@ -207,7 +208,7 @@ func TestASTToJSONMatchesReferenceShapes(t *testing.T) {
 }
 
 func TestParseGlobRootOptions(t *testing.T) {
-	opts := Options{NoCase: true, Dot: true}
+	opts := Config{NoCase: true, Dot: true}
 	a := ParseGlob("*(a)", opts)
 	if !a.Options.NoCase || !a.Parts[0].Node.Options.NoCase {
 		t.Fatal("options should be shared from root")
@@ -215,7 +216,7 @@ func TestParseGlobRootOptions(t *testing.T) {
 }
 
 func TestASTDepthAndParent(t *testing.T) {
-	a := ParseGlob("*(@(x))", Options{})
+	a := ParseGlob("*(@(x))", Config{})
 	ext := a.Parts[0].Node
 	inner := ext.Parts[0].Node.Parts[0].Node
 	if a.Depth() != 0 || ext.Depth() != 1 {

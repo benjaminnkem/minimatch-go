@@ -1,13 +1,14 @@
-package minimatch
+package ast
 
 import (
 	"encoding/json"
+	"github.com/tochison/minimatch/internal/scan"
 	"reflect"
 	"testing"
 )
 
 func prepareAST(pattern string) *AST {
-	a := ParseGlob(pattern, Options{})
+	a := ParseGlob(pattern, Config{})
 	a.Flatten()
 	a.FillNegs()
 	return a
@@ -17,7 +18,7 @@ func TestFillNegsCopiesTrailingText(t *testing.T) {
 	// !(a)b → each alt of ! gains "b"
 	a := prepareAST("!(a)b")
 	neg := a.Parts[0].Node
-	if neg.Type != ExtglobNegate {
+	if neg.Type != scan.ExtglobNegate {
 		t.Fatal(neg.Type)
 	}
 	alt := neg.Parts[0].Node
@@ -62,7 +63,7 @@ func TestFillNegsNestedInAt(t *testing.T) {
 	list := at.Parts[0].Node
 	var neg *AST
 	for _, p := range list.Parts {
-		if p.Node != nil && p.Node.Type == ExtglobNegate {
+		if p.Node != nil && p.Node.Type == scan.ExtglobNegate {
 			neg = p.Node
 			break
 		}
@@ -77,7 +78,7 @@ func TestFillNegsNestedInAt(t *testing.T) {
 }
 
 func TestFillNegsIdempotent(t *testing.T) {
-	a := ParseGlob("!(a)b", Options{})
+	a := ParseGlob("!(a)b", Config{})
 	a.Flatten()
 	a.FillNegs()
 	j1, _ := json.Marshal(a.ToJSON())
@@ -132,13 +133,13 @@ func TestFillNegsDoubleNegationChain(t *testing.T) {
 	if alt.Parts[0].Text != "a" {
 		t.Fatal(alt.Parts[0])
 	}
-	if alt.Parts[1].Node == nil || alt.Parts[1].Node.Type != ExtglobNegate {
+	if alt.Parts[1].Node == nil || alt.Parts[1].Node.Type != scan.ExtglobNegate {
 		t.Fatalf("expected nested ! %+v", alt.Parts)
 	}
 }
 
 func TestFillNegsChainedReturnsReceiver(t *testing.T) {
-	a := ParseGlob("!(x)y", Options{})
+	a := ParseGlob("!(x)y", Config{})
 	if a.Flatten().FillNegs() != a {
 		t.Fatal("want same pointer")
 	}

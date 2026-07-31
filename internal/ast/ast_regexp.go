@@ -1,9 +1,11 @@
-package minimatch
+package ast
 
 import (
 	"strings"
 
 	"github.com/dlclark/regexp2"
+	"github.com/tochison/minimatch/internal/class"
+	"github.com/tochison/minimatch/internal/scan"
 )
 
 // Regexp fragments used when compiling path-segment patterns.
@@ -193,14 +195,14 @@ func (n *AST) listToRegExpSource(allowDot *bool, dot bool) RegExpSource {
 
 	end := ""
 	if n.isEnd() && n.root != nil && n.root.filledNegs &&
-		n.parent != nil && n.parent.Type == ExtglobNegate {
+		n.parent != nil && n.parent.Type == scan.ExtglobNegate {
 		end = `(?:$|\/)`
 	}
 
 	final := start + src + end
 	return RegExpSource{
 		Re:       final,
-		Body:     Unescape(src, UnescapeOptions{}),
+		Body:     unescape(src),
 		HasMagic: n.hasMagic,
 		UFlag:    n.uFlag,
 	}
@@ -216,15 +218,15 @@ func (n *AST) hasNonStringPart() bool {
 }
 
 func (n *AST) extglobToRegExpSource(allowDot *bool, dot bool) RegExpSource {
-	repeated := n.Type == ExtglobStar || n.Type == ExtglobPlus
+	repeated := n.Type == scan.ExtglobStar || n.Type == scan.ExtglobPlus
 	start := `(?:`
-	if n.Type == ExtglobNegate {
+	if n.Type == scan.ExtglobNegate {
 		start = `(?:(?!(?:`
 	}
 
 	body := n.partsToRegExp(dot)
 
-	if n.isStart() && n.isEnd() && body == "" && n.Type != ExtglobNegate {
+	if n.isStart() && n.isEnd() && body == "" && n.Type != scan.ExtglobNegate {
 		// invalid empty extglob as whole path portion
 		s := n.String()
 		n.Parts = []ASTPart{{Text: s}}
@@ -232,7 +234,7 @@ func (n *AST) extglobToRegExpSource(allowDot *bool, dot bool) RegExpSource {
 		n.hasMagic = false
 		return RegExpSource{
 			Re:       s,
-			Body:     Unescape(n.String(), UnescapeOptions{}),
+			Body:     unescape(n.String()),
 			HasMagic: false,
 			UFlag:    false,
 		}
@@ -262,7 +264,7 @@ func (n *AST) extglobToRegExpSource(allowDot *bool, dot bool) RegExpSource {
 	}
 
 	var final string
-	if n.Type == ExtglobNegate && n.EmptyExt {
+	if n.Type == scan.ExtglobNegate && n.EmptyExt {
 		prefix := ""
 		if n.isStart() && !dot {
 			prefix = reStartNoDot
@@ -271,23 +273,23 @@ func (n *AST) extglobToRegExpSource(allowDot *bool, dot bool) RegExpSource {
 	} else {
 		var close string
 		switch n.Type {
-		case ExtglobNegate:
+		case scan.ExtglobNegate:
 			close = `))`
 			if n.isStart() && !dot && !allowDotVal {
 				close += reStartNoDot
 			}
 			close += reStar + `)`
-		case ExtglobOne:
+		case scan.ExtglobOne:
 			close = `)`
-		case ExtglobOptional:
+		case scan.ExtglobOptional:
 			close = `)?`
-		case ExtglobPlus:
+		case scan.ExtglobPlus:
 			if bodyDotAllowed != "" {
 				close = `)`
 			} else {
 				close = `)+`
 			}
-		case ExtglobStar:
+		case scan.ExtglobStar:
 			if bodyDotAllowed != "" {
 				close = `)?`
 			} else {
@@ -302,7 +304,7 @@ func (n *AST) extglobToRegExpSource(allowDot *bool, dot bool) RegExpSource {
 	n.hasMagic = true
 	return RegExpSource{
 		Re:       final,
-		Body:     Unescape(body, UnescapeOptions{}),
+		Body:     unescape(body),
 		HasMagic: true,
 		UFlag:    n.uFlag,
 	}
@@ -379,7 +381,7 @@ func parseGlob(glob string, hasMagic bool, noEmpty bool) RegExpSource {
 		if r == '[' {
 			// parseClass uses byte indices into original string
 			byteIdx := len(string(runes[:i]))
-			pc := parseClass(glob, byteIdx)
+			pc := parseClassAt(glob, byteIdx)
 			if pc.Consumed > 0 {
 				re.WriteString(pc.Src)
 				uflag = uflag || pc.UFlag
@@ -403,7 +405,7 @@ func parseGlob(glob string, hasMagic bool, noEmpty bool) RegExpSource {
 
 	return RegExpSource{
 		Re:       re.String(),
-		Body:     Unescape(glob, UnescapeOptions{}),
+		Body:     unescape(glob),
 		HasMagic: hasMagic,
 		UFlag:    uflag,
 	}
@@ -435,4 +437,28 @@ func isOnlyStars(glob string) bool {
 		}
 	}
 	return true
+}
+
+func parseClassAt(glob string, pos int) class.ParseClassResult {
+	// Use unexported path via ParseClass
+	r, err := class.ParseClass(glob, pos)
+	if err != nil {
+		return class.ParseClassResult{}
+	}
+	return r
+}
+
+func regexpEscape(s string) string {
+	var b strings.Builder
+	for _, r := range s {
+		switch r {
+		case '-', '[', ']', '{', '}', '(', ')', '*', '+', '?', '.',
+			',', '\\', '^', '$', '|', '#', ' ', '\t', '\n', '\r', '\f', '\v':
+			b.WriteByte('\\')
+			b.WriteRune(r)
+		default:
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
 }

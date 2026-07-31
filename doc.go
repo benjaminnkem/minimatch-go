@@ -6,43 +6,20 @@
 // implementation at minimatch (TypeScript), including options semantics,
 // edge cases, and ordering. It is not a mechanical file-by-file translation.
 //
-// # Status
-//
-// The port is built incrementally. The foundation layer provides shared
-// types (including the full Options / MinimatchOptions model), sentinel
-// errors, pattern validation, and Escape/Unescape. Matching, brace
-// expansion, character-class parsing, the extglob AST, and the public match
-// APIs are added in later steps.
-//
 // # Package layout
 //
-// The module root is a single public package, minimatch. That matches
-// common Go library style for a focused API (compare path/filepath) and
-// keeps exported names stable as subsystems land.
+//	minimatch-go/                      module github.com/tochison/minimatch
+//	  *.go                             public API (package minimatch)
+//	  internal/
+//	    brace/                         bash brace expansion
+//	    scan/                          path-segment lexer
+//	    class/                         [character classes] + POSIX
+//	    ast/                           extglob AST + segment regexp compile
+//	  testdata/                        Node oracles and fixtures
+//	  .github/workflows/               CI
 //
-//	minimatch-go/                 module github.com/tochison/minimatch
-//	  doc.go                      this file — package overview
-//	  platform.go                 Platform and host detection
-//	  options.go                  Options and documented defaults
-//	  errors.go                   sentinel errors
-//	  validate.go                 pattern length / validity checks
-//	  escape.go / unescape.go     literal escape helpers
-//	  token.go / scanner.go       path-segment lexical scan (#parseAST)
-//	  brace_expand.go / balanced.go  bash brace expansion
-//	  ast.go / ast_flatten.go / ast_fill_negs.go
-//	                              extglob AST, flatten, negative tails
-//	  parse_class.go              [character classes] + POSIX
-//	  ast_regexp.go               toRegExpSource / toMMPattern
-//	  minimatch.go / match.go / pattern_part.go
-//	                              compile + path matching
-//	  make_re.go / public.go      MakeRe, Filter, MatchList, Defaults
-//	  differential_test.go        Node patterns.js oracle
-//	  fuzz_test.go / benchmark_test.go
-//	  windows_test.go             win32/UNC behaviour via Options.Platform
-
-// Future code stays in package minimatch unless a hard boundary appears
-// (for example a large brace-expansion implementation that benefits from
-// internal/ isolation). Subpackages are not introduced pre-emptively.
+// Callers import only github.com/tochison/minimatch. Implementation packages
+// under internal/ are not part of the compatibility surface.
 //
 // The TypeScript tree under ../minimatch is the behavioural specification
 // and is read-only for this port.

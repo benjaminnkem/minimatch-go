@@ -1,4 +1,4 @@
-package minimatch
+package scan
 
 // TokenKind is the kind of a lexical token produced by Scan.
 //

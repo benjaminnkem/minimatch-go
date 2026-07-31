@@ -1,4 +1,6 @@
-package minimatch
+package ast
+
+import "github.com/tochison/minimatch/internal/scan"
 
 // Flatten rewrites nested extglobs into equivalent shallower forms.
 //
@@ -62,46 +64,46 @@ func (n *AST) flatten() {
 
 // adoptionMap: parent → child types that may be adopted without an empty alt.
 // TypeScript adoptionMap.
-var adoptionMap = map[ExtglobType][]ExtglobType{
-	ExtglobNegate:   {ExtglobOne},
-	ExtglobOptional: {ExtglobOptional, ExtglobOne},
-	ExtglobOne:      {ExtglobOne},
-	ExtglobStar:     {ExtglobStar, ExtglobPlus, ExtglobOptional, ExtglobOne},
-	ExtglobPlus:     {ExtglobPlus, ExtglobOne},
+var adoptionMap = map[scan.ExtglobType][]scan.ExtglobType{
+	scan.ExtglobNegate:   {scan.ExtglobOne},
+	scan.ExtglobOptional: {scan.ExtglobOptional, scan.ExtglobOne},
+	scan.ExtglobOne:      {scan.ExtglobOne},
+	scan.ExtglobStar:     {scan.ExtglobStar, scan.ExtglobPlus, scan.ExtglobOptional, scan.ExtglobOne},
+	scan.ExtglobPlus:     {scan.ExtglobPlus, scan.ExtglobOne},
 }
 
 // adoptionWithSpaceMap: adopt but insert an empty alternative.
 // TypeScript adoptionWithSpaceMap.
-var adoptionWithSpaceMap = map[ExtglobType][]ExtglobType{
-	ExtglobNegate: {ExtglobOptional},
-	ExtglobOne:    {ExtglobOptional},
-	ExtglobPlus:   {ExtglobOptional, ExtglobStar},
+var adoptionWithSpaceMap = map[scan.ExtglobType][]scan.ExtglobType{
+	scan.ExtglobNegate: {scan.ExtglobOptional},
+	scan.ExtglobOne:    {scan.ExtglobOptional},
+	scan.ExtglobPlus:   {scan.ExtglobOptional, scan.ExtglobStar},
 }
 
 // usurpMap: parent type → (child type → resulting parent type).
 // TypeScript usurpMap. Missing parent types cannot usurp.
-var usurpMap = map[ExtglobType]map[ExtglobType]ExtglobType{
-	ExtglobNegate: {
-		ExtglobNegate: ExtglobOne, // !(!(...)) → @(...)
+var usurpMap = map[scan.ExtglobType]map[scan.ExtglobType]scan.ExtglobType{
+	scan.ExtglobNegate: {
+		scan.ExtglobNegate: scan.ExtglobOne, // !(!(...)) → @(...)
 	},
-	ExtglobOptional: {
-		ExtglobStar: ExtglobStar, // ?(*(...)) → *(...)
-		ExtglobPlus: ExtglobStar, // ?(+ (...)) → *(...)
+	scan.ExtglobOptional: {
+		scan.ExtglobStar: scan.ExtglobStar, // ?(*(...)) → *(...)
+		scan.ExtglobPlus: scan.ExtglobStar, // ?(+ (...)) → *(...)
 	},
-	ExtglobOne: {
-		ExtglobNegate:   ExtglobNegate,
-		ExtglobOptional: ExtglobOptional,
-		ExtglobOne:      ExtglobOne,
-		ExtglobStar:     ExtglobStar,
-		ExtglobPlus:     ExtglobPlus,
+	scan.ExtglobOne: {
+		scan.ExtglobNegate:   scan.ExtglobNegate,
+		scan.ExtglobOptional: scan.ExtglobOptional,
+		scan.ExtglobOne:      scan.ExtglobOne,
+		scan.ExtglobStar:     scan.ExtglobStar,
+		scan.ExtglobPlus:     scan.ExtglobPlus,
 	},
-	ExtglobPlus: {
-		ExtglobOptional: ExtglobStar, // +(? (...)) mapped when not adopt-with-space
-		ExtglobStar:     ExtglobStar,
+	scan.ExtglobPlus: {
+		scan.ExtglobOptional: scan.ExtglobStar, // +(? (...)) mapped when not adopt-with-space
+		scan.ExtglobStar:     scan.ExtglobStar,
 	},
 }
 
-func typeIn(list []ExtglobType, t ExtglobType) bool {
+func typeIn(list []scan.ExtglobType, t scan.ExtglobType) bool {
 	for _, x := range list {
 		if x == t {
 			return true
@@ -115,7 +117,7 @@ func typeIn(list []ExtglobType, t ExtglobType) bool {
 //
 // TypeScript #canAdopt: child.type === null, child.parts.length === 1,
 // grandchild is extglob, and map allows parent←grandchild type.
-func (n *AST) canAdopt(child *AST, m map[ExtglobType][]ExtglobType) bool {
+func (n *AST) canAdopt(child *AST, m map[scan.ExtglobType][]scan.ExtglobType) bool {
 	if n == nil || !n.IsExtglob() || child == nil || !child.IsList() {
 		return false
 	}

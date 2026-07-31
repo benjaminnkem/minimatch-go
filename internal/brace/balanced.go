@@ -1,4 +1,4 @@
-package minimatch
+package brace
 
 import "strings"
 
