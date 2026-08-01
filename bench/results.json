@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-08-01T13:02:54.925452+00:00",
+    "generated_at": "2026-08-01T14:13:25.545940+00:00",
     "hardware": {
       "uname": "Darwin Nkems-MacBook-Pro.local 25.6.0 Darwin Kernel Version 25.6.0: Sat Jul 11 15:22:40 PDT 2026; root:xnu-12377.161.13~4/RELEASE_X86_64 x86_64",
       "cpu": "Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz"
@@ -20,68 +20,68 @@
       "arch": "x64"
     },
     "memory": {
-      "rss_bytes": 62439424,
-      "heap_bytes": 10480920
+      "rss_bytes": 60915712,
+      "heap_bytes": 9421376
     },
     "scenarios": {
       "match_oneshot": {
         "ops": 3000,
-        "ns_per_op_mean": 13460.42,
-        "ns_per_op_p50": 9407.000000010157,
-        "ns_per_op_p95": 21034.00000000022,
-        "ns_per_op_p99": 46109.00000000129,
+        "ns_per_op_mean": 7901.648333333336,
+        "ns_per_op_p50": 5365.999999995097,
+        "ns_per_op_p95": 15568.999999999278,
+        "ns_per_op_p99": 30365.000000003307,
         "samples": 3000
       },
       "match_compiled": {
         "ops": 20000,
-        "ns_per_op_mean": 1059.51855,
-        "ns_per_op_p50": 685.0000000042655,
-        "ns_per_op_p95": 872.0000000010941,
-        "ns_per_op_p99": 3543.9999999908878,
+        "ns_per_op_mean": 653.2293500000002,
+        "ns_per_op_p50": 435.00000001017725,
+        "ns_per_op_p95": 537.9999999917118,
+        "ns_per_op_p99": 2217.00000000169,
         "samples": 20000
       },
       "match_extglob": {
         "ops": 20000,
-        "ns_per_op_mean": 583.0527500000002,
-        "ns_per_op_p50": 405.9999999981301,
-        "ns_per_op_p95": 585.0000000009459,
-        "ns_per_op_p99": 710.9999999954653,
+        "ns_per_op_mean": 340.56460000000044,
+        "ns_per_op_p50": 243.99999999502597,
+        "ns_per_op_p95": 341.0000000059199,
+        "ns_per_op_p99": 461.000000001377,
         "samples": 20000
       },
       "match_complex_compile": {
         "ops": 500,
-        "ns_per_op_mean": 128765.37000000001,
-        "ns_per_op_p50": 106187.00000003401,
-        "ns_per_op_p95": 256498.99999999092,
-        "ns_per_op_p99": 490012.0000000072,
+        "ns_per_op_mean": 67835.714,
+        "ns_per_op_p50": 63884.99999999908,
+        "ns_per_op_p95": 83893.00000001754,
+        "ns_per_op_p99": 205026.0000000037,
         "samples": 500
       },
       "brace_expand": {
         "ops": 5000,
-        "ns_per_op_mean": 11571.334200000001,
-        "ns_per_op_p50": 10718.999999994594,
-        "ns_per_op_p95": 12446.999999951913,
-        "ns_per_op_p99": 23268.999999970674,
+        "ns_per_op_mean": 6984.773000000001,
+        "ns_per_op_p50": 6685.000000004493,
+        "ns_per_op_p95": 6934.999999998581,
+        "ns_per_op_p99": 12173.999999987473,
         "samples": 5000
       },
       "corpus": {
         "ops": 2000,
-        "ns_per_op_mean": 19895.12349999998,
-        "ns_per_op_p50": 18144.0000000066,
-        "ns_per_op_p95": 21036.999999978434,
-        "ns_per_op_p99": 51887.99999996263,
+        "ns_per_op_mean": 11988.661999999991,
+        "ns_per_op_p50": 11148.999999988973,
+        "ns_per_op_p95": 12874.00000001071,
+        "ns_per_op_p99": 27546.999999998436,
         "samples": 2000
       },
       "startup_cold": {
-        "startup_ms": 120.987,
-        "note": "cold process: node load + one Match"
+        "startup_ms": 87.07,
+        "note": "cold process: node load + one Match; median of 5 after discard-1"
       }
     }
   },
   "go": {
     "impl": "go-minimatch-go",
     "memory": {
-      "heap_bytes": 1427248,
+      "heap_bytes": 793208,
       "rss_bytes": null
     },
     "meta": {
@@ -92,56 +92,56 @@
     },
     "scenarios": {
       "brace_expand": {
-        "ns_per_op_mean": 5137.459,
-        "ns_per_op_p50": 4620,
-        "ns_per_op_p95": 5802,
-        "ns_per_op_p99": 10288,
+        "ns_per_op_mean": 3411.5294,
+        "ns_per_op_p50": 2975,
+        "ns_per_op_p95": 5226,
+        "ns_per_op_p99": 6659,
         "ops": 5000,
         "samples": 5000
       },
       "corpus": {
-        "ns_per_op_mean": 31461.931,
-        "ns_per_op_p50": 28775,
-        "ns_per_op_p95": 33837,
-        "ns_per_op_p99": 89536,
+        "ns_per_op_mean": 21863.1815,
+        "ns_per_op_p50": 18563,
+        "ns_per_op_p95": 34676,
+        "ns_per_op_p99": 52001,
         "ops": 2000,
         "samples": 2000
       },
       "match_compiled": {
-        "ns_per_op_mean": 1194.9168,
-        "ns_per_op_p50": 904,
-        "ns_per_op_p95": 1325,
-        "ns_per_op_p99": 2195,
+        "ns_per_op_mean": 823.89725,
+        "ns_per_op_p50": 643,
+        "ns_per_op_p95": 918,
+        "ns_per_op_p99": 1504,
         "ops": 20000,
         "samples": 20000
       },
       "match_complex_compile": {
-        "ns_per_op_mean": 125573.444,
-        "ns_per_op_p50": 110644,
-        "ns_per_op_p95": 160153,
-        "ns_per_op_p99": 536468,
+        "ns_per_op_mean": 81380.186,
+        "ns_per_op_p50": 71201,
+        "ns_per_op_p95": 131328,
+        "ns_per_op_p99": 362839,
         "ops": 500,
         "samples": 500
       },
       "match_extglob": {
-        "ns_per_op_mean": 895.41115,
-        "ns_per_op_p50": 715,
-        "ns_per_op_p95": 827,
-        "ns_per_op_p99": 1282,
+        "ns_per_op_mean": 579.72115,
+        "ns_per_op_p50": 458,
+        "ns_per_op_p95": 509,
+        "ns_per_op_p99": 796,
         "ops": 20000,
         "samples": 20000
       },
       "match_oneshot": {
-        "ns_per_op_mean": 12723.685666666666,
-        "ns_per_op_p50": 10032,
-        "ns_per_op_p95": 22783,
-        "ns_per_op_p99": 43239,
+        "ns_per_op_mean": 10232.188,
+        "ns_per_op_p50": 7799,
+        "ns_per_op_p95": 17482,
+        "ns_per_op_p99": 29631,
         "ops": 3000,
         "samples": 3000
       },
       "startup_cold": {
-        "startup_ms": 10.26,
-        "note": "cold process: prebuilt Go binary + one Match"
+        "startup_ms": 8.241,
+        "note": "cold process: prebuilt Go binary + one Match; median of 5 after discard-1"
       }
     },
     "version": "0.1.0"
@@ -150,134 +150,134 @@
     "brace_expand": {
       "node": {
         "ops": 5000,
-        "ns_per_op_mean": 11571.334200000001,
-        "ns_per_op_p50": 10718.999999994594,
-        "ns_per_op_p95": 12446.999999951913,
-        "ns_per_op_p99": 23268.999999970674,
+        "ns_per_op_mean": 6984.773000000001,
+        "ns_per_op_p50": 6685.000000004493,
+        "ns_per_op_p95": 6934.999999998581,
+        "ns_per_op_p99": 12173.999999987473,
         "samples": 5000
       },
       "go": {
-        "ns_per_op_mean": 5137.459,
-        "ns_per_op_p50": 4620,
-        "ns_per_op_p95": 5802,
-        "ns_per_op_p99": 10288,
+        "ns_per_op_mean": 3411.5294,
+        "ns_per_op_p50": 2975,
+        "ns_per_op_p95": 5226,
+        "ns_per_op_p99": 6659,
         "ops": 5000,
         "samples": 5000
       },
-      "speedup_go_vs_node_mean": 2.2523457997426357,
-      "speedup_go_vs_node_p99": 2.2617612752693113
+      "speedup_go_vs_node_mean": 2.047402258939935,
+      "speedup_go_vs_node_p99": 1.8282024327958362
     },
     "corpus": {
       "node": {
         "ops": 2000,
-        "ns_per_op_mean": 19895.12349999998,
-        "ns_per_op_p50": 18144.0000000066,
-        "ns_per_op_p95": 21036.999999978434,
-        "ns_per_op_p99": 51887.99999996263,
+        "ns_per_op_mean": 11988.661999999991,
+        "ns_per_op_p50": 11148.999999988973,
+        "ns_per_op_p95": 12874.00000001071,
+        "ns_per_op_p99": 27546.999999998436,
         "samples": 2000
       },
       "go": {
-        "ns_per_op_mean": 31461.931,
-        "ns_per_op_p50": 28775,
-        "ns_per_op_p95": 33837,
-        "ns_per_op_p99": 89536,
+        "ns_per_op_mean": 21863.1815,
+        "ns_per_op_p50": 18563,
+        "ns_per_op_p95": 34676,
+        "ns_per_op_p99": 52001,
         "ops": 2000,
         "samples": 2000
       },
-      "speedup_go_vs_node_mean": 0.632355448875658,
-      "speedup_go_vs_node_p99": 0.5795210864899328
+      "speedup_go_vs_node_mean": 0.5483493790690981,
+      "speedup_go_vs_node_p99": 0.5297398126958797
     },
     "match_compiled": {
       "node": {
         "ops": 20000,
-        "ns_per_op_mean": 1059.51855,
-        "ns_per_op_p50": 685.0000000042655,
-        "ns_per_op_p95": 872.0000000010941,
-        "ns_per_op_p99": 3543.9999999908878,
+        "ns_per_op_mean": 653.2293500000002,
+        "ns_per_op_p50": 435.00000001017725,
+        "ns_per_op_p95": 537.9999999917118,
+        "ns_per_op_p99": 2217.00000000169,
         "samples": 20000
       },
       "go": {
-        "ns_per_op_mean": 1194.9168,
-        "ns_per_op_p50": 904,
-        "ns_per_op_p95": 1325,
-        "ns_per_op_p99": 2195,
+        "ns_per_op_mean": 823.89725,
+        "ns_per_op_p50": 643,
+        "ns_per_op_p95": 918,
+        "ns_per_op_p99": 1504,
         "ops": 20000,
         "samples": 20000
       },
-      "speedup_go_vs_node_mean": 0.8866881359438582,
-      "speedup_go_vs_node_p99": 1.6145785876951653
+      "speedup_go_vs_node_mean": 0.7928529316003909,
+      "speedup_go_vs_node_p99": 1.4740691489372937
     },
     "match_complex_compile": {
       "node": {
         "ops": 500,
-        "ns_per_op_mean": 128765.37000000001,
-        "ns_per_op_p50": 106187.00000003401,
-        "ns_per_op_p95": 256498.99999999092,
-        "ns_per_op_p99": 490012.0000000072,
+        "ns_per_op_mean": 67835.714,
+        "ns_per_op_p50": 63884.99999999908,
+        "ns_per_op_p95": 83893.00000001754,
+        "ns_per_op_p99": 205026.0000000037,
         "samples": 500
       },
       "go": {
-        "ns_per_op_mean": 125573.444,
-        "ns_per_op_p50": 110644,
-        "ns_per_op_p95": 160153,
-        "ns_per_op_p99": 536468,
+        "ns_per_op_mean": 81380.186,
+        "ns_per_op_p50": 71201,
+        "ns_per_op_p95": 131328,
+        "ns_per_op_p99": 362839,
         "ops": 500,
         "samples": 500
       },
-      "speedup_go_vs_node_mean": 1.0254187979426606,
-      "speedup_go_vs_node_p99": 0.9134039681770529
+      "speedup_go_vs_node_mean": 0.8335654823890425,
+      "speedup_go_vs_node_p99": 0.5650605364914016
     },
     "match_extglob": {
       "node": {
         "ops": 20000,
-        "ns_per_op_mean": 583.0527500000002,
-        "ns_per_op_p50": 405.9999999981301,
-        "ns_per_op_p95": 585.0000000009459,
-        "ns_per_op_p99": 710.9999999954653,
+        "ns_per_op_mean": 340.56460000000044,
+        "ns_per_op_p50": 243.99999999502597,
+        "ns_per_op_p95": 341.0000000059199,
+        "ns_per_op_p99": 461.000000001377,
         "samples": 20000
       },
       "go": {
-        "ns_per_op_mean": 895.41115,
-        "ns_per_op_p50": 715,
-        "ns_per_op_p95": 827,
-        "ns_per_op_p99": 1282,
+        "ns_per_op_mean": 579.72115,
+        "ns_per_op_p50": 458,
+        "ns_per_op_p95": 509,
+        "ns_per_op_p99": 796,
         "ops": 20000,
         "samples": 20000
       },
-      "speedup_go_vs_node_mean": 0.6511564547749937,
-      "speedup_go_vs_node_p99": 0.5546021840838262
+      "speedup_go_vs_node_mean": 0.5874627827533987,
+      "speedup_go_vs_node_p99": 0.579145728644946
     },
     "match_oneshot": {
       "node": {
         "ops": 3000,
-        "ns_per_op_mean": 13460.42,
-        "ns_per_op_p50": 9407.000000010157,
-        "ns_per_op_p95": 21034.00000000022,
-        "ns_per_op_p99": 46109.00000000129,
+        "ns_per_op_mean": 7901.648333333336,
+        "ns_per_op_p50": 5365.999999995097,
+        "ns_per_op_p95": 15568.999999999278,
+        "ns_per_op_p99": 30365.000000003307,
         "samples": 3000
       },
       "go": {
-        "ns_per_op_mean": 12723.685666666666,
-        "ns_per_op_p50": 10032,
-        "ns_per_op_p95": 22783,
-        "ns_per_op_p99": 43239,
+        "ns_per_op_mean": 10232.188,
+        "ns_per_op_p50": 7799,
+        "ns_per_op_p95": 17482,
+        "ns_per_op_p99": 29631,
         "ops": 3000,
         "samples": 3000
       },
-      "speedup_go_vs_node_mean": 1.0579025883406896,
-      "speedup_go_vs_node_p99": 1.0663752630727188
+      "speedup_go_vs_node_mean": 0.7722344754937396,
+      "speedup_go_vs_node_p99": 1.0247713543249741
     },
     "startup_cold": {
       "node": {
-        "startup_ms": 120.987,
-        "note": "cold process: node load + one Match"
+        "startup_ms": 87.07,
+        "note": "cold process: node load + one Match; median of 5 after discard-1"
       },
       "go": {
-        "startup_ms": 10.26,
-        "note": "cold process: prebuilt Go binary + one Match"
+        "startup_ms": 8.241,
+        "note": "cold process: prebuilt Go binary + one Match; median of 5 after discard-1"
       },
-      "node_startup_ms": 120.987,
-      "go_startup_ms": 10.26
+      "node_startup_ms": 87.07,
+      "go_startup_ms": 8.241
     }
   }
 }

@@ -6,72 +6,110 @@ duration: 1m0s
 seed:     1
 batch:    40
 go:       go1.26.5 darwin/amd64
-started:  2026-08-01T13:02:56Z
+started:  2026-08-01T14:09:35Z
 
-progress: elapsed=1.248s rounds=5 cases=200 compared=200 skipped=0 div=0
-progress: elapsed=2.192s rounds=10 cases=400 compared=400 skipped=0 div=0
-progress: elapsed=3.31s rounds=15 cases=600 compared=600 skipped=0 div=0
-progress: elapsed=4.311s rounds=20 cases=800 compared=800 skipped=0 div=0
-progress: elapsed=5.213s rounds=25 cases=1000 compared=1000 skipped=0 div=0
-progress: elapsed=6.266s rounds=30 cases=1200 compared=1200 skipped=0 div=0
-progress: elapsed=7.206s rounds=35 cases=1400 compared=1400 skipped=0 div=0
-progress: elapsed=8.111s rounds=40 cases=1600 compared=1600 skipped=0 div=0
-progress: elapsed=9.05s rounds=45 cases=1800 compared=1800 skipped=0 div=0
-progress: elapsed=9.901s rounds=50 cases=2000 compared=2000 skipped=0 div=0
-progress: elapsed=10.856s rounds=55 cases=2200 compared=2200 skipped=0 div=0
-progress: elapsed=11.761s rounds=60 cases=2400 compared=2400 skipped=0 div=0
-progress: elapsed=12.688s rounds=65 cases=2600 compared=2600 skipped=0 div=0
-progress: elapsed=13.576s rounds=70 cases=2800 compared=2800 skipped=0 div=0
-progress: elapsed=14.501s rounds=75 cases=3000 compared=3000 skipped=0 div=0
-progress: elapsed=15.442s rounds=80 cases=3200 compared=3200 skipped=0 div=0
-progress: elapsed=16.279s rounds=85 cases=3400 compared=3400 skipped=0 div=0
-progress: elapsed=17.182s rounds=90 cases=3600 compared=3600 skipped=0 div=0
-progress: elapsed=18.159s rounds=95 cases=3800 compared=3800 skipped=0 div=0
-progress: elapsed=19.112s rounds=100 cases=4000 compared=4000 skipped=0 div=0
-progress: elapsed=19.969s rounds=105 cases=4200 compared=4200 skipped=0 div=0
-progress: elapsed=20.805s rounds=110 cases=4400 compared=4400 skipped=0 div=0
-progress: elapsed=21.682s rounds=115 cases=4600 compared=4600 skipped=0 div=0
-progress: elapsed=22.635s rounds=120 cases=4800 compared=4800 skipped=0 div=0
-progress: elapsed=23.624s rounds=125 cases=5000 compared=5000 skipped=0 div=0
-progress: elapsed=24.55s rounds=130 cases=5200 compared=5200 skipped=0 div=0
-progress: elapsed=25.446s rounds=135 cases=5400 compared=5400 skipped=0 div=0
-progress: elapsed=26.352s rounds=140 cases=5600 compared=5600 skipped=0 div=0
-progress: elapsed=27.232s rounds=145 cases=5800 compared=5800 skipped=0 div=0
-progress: elapsed=28.167s rounds=150 cases=6000 compared=6000 skipped=0 div=0
-progress: elapsed=29.033s rounds=155 cases=6200 compared=6200 skipped=0 div=0
-progress: elapsed=30.008s rounds=160 cases=6400 compared=6400 skipped=0 div=0
-progress: elapsed=30.756s rounds=165 cases=6600 compared=6600 skipped=0 div=0
-progress: elapsed=31.552s rounds=170 cases=6800 compared=6800 skipped=0 div=0
-progress: elapsed=32.245s rounds=175 cases=7000 compared=7000 skipped=0 div=0
-progress: elapsed=32.927s rounds=180 cases=7200 compared=7200 skipped=0 div=0
-progress: elapsed=33.614s rounds=185 cases=7400 compared=7400 skipped=0 div=0
-progress: elapsed=35.693s rounds=190 cases=7600 compared=7600 skipped=0 div=0
-progress: elapsed=36.98s rounds=195 cases=7800 compared=7800 skipped=0 div=0
-progress: elapsed=38.346s rounds=200 cases=8000 compared=8000 skipped=0 div=0
-progress: elapsed=39.62s rounds=205 cases=8200 compared=8200 skipped=0 div=0
-progress: elapsed=40.815s rounds=210 cases=8400 compared=8400 skipped=0 div=0
-progress: elapsed=42.057s rounds=215 cases=8600 compared=8600 skipped=0 div=0
-progress: elapsed=43.23s rounds=220 cases=8800 compared=8800 skipped=0 div=0
-progress: elapsed=44.449s rounds=225 cases=9000 compared=9000 skipped=0 div=0
-progress: elapsed=45.681s rounds=230 cases=9200 compared=9200 skipped=0 div=0
-progress: elapsed=46.837s rounds=235 cases=9400 compared=9400 skipped=0 div=0
-progress: elapsed=48.049s rounds=240 cases=9600 compared=9600 skipped=0 div=0
-progress: elapsed=49.406s rounds=245 cases=9800 compared=9800 skipped=0 div=0
-progress: elapsed=50.694s rounds=250 cases=10000 compared=10000 skipped=0 div=0
-progress: elapsed=52.007s rounds=255 cases=10200 compared=10200 skipped=0 div=0
-progress: elapsed=53.227s rounds=260 cases=10400 compared=10400 skipped=0 div=0
-progress: elapsed=54.477s rounds=265 cases=10600 compared=10600 skipped=0 div=0
-progress: elapsed=55.691s rounds=270 cases=10800 compared=10800 skipped=0 div=0
-progress: elapsed=57.01s rounds=275 cases=11000 compared=11000 skipped=0 div=0
-progress: elapsed=58.198s rounds=280 cases=11200 compared=11200 skipped=0 div=0
-progress: elapsed=59.409s rounds=285 cases=11400 compared=11400 skipped=0 div=0
+progress: elapsed=749ms rounds=5 cases=200 compared=200 skipped=0 div=0
+progress: elapsed=1.358s rounds=10 cases=400 compared=400 skipped=0 div=0
+progress: elapsed=1.992s rounds=15 cases=600 compared=600 skipped=0 div=0
+progress: elapsed=2.621s rounds=20 cases=800 compared=800 skipped=0 div=0
+progress: elapsed=3.193s rounds=25 cases=1000 compared=1000 skipped=0 div=0
+progress: elapsed=3.91s rounds=30 cases=1200 compared=1200 skipped=0 div=0
+progress: elapsed=4.53s rounds=35 cases=1400 compared=1400 skipped=0 div=0
+progress: elapsed=5.123s rounds=40 cases=1600 compared=1600 skipped=0 div=0
+progress: elapsed=5.743s rounds=45 cases=1800 compared=1800 skipped=0 div=0
+progress: elapsed=6.304s rounds=50 cases=2000 compared=2000 skipped=0 div=0
+progress: elapsed=6.934s rounds=55 cases=2200 compared=2200 skipped=0 div=0
+progress: elapsed=7.524s rounds=60 cases=2400 compared=2400 skipped=0 div=0
+progress: elapsed=8.101s rounds=65 cases=2600 compared=2600 skipped=0 div=0
+progress: elapsed=8.688s rounds=70 cases=2800 compared=2800 skipped=0 div=0
+progress: elapsed=9.304s rounds=75 cases=3000 compared=3000 skipped=0 div=0
+progress: elapsed=9.966s rounds=80 cases=3200 compared=3200 skipped=0 div=0
+progress: elapsed=10.519s rounds=85 cases=3400 compared=3400 skipped=0 div=0
+progress: elapsed=11.121s rounds=90 cases=3600 compared=3600 skipped=0 div=0
+progress: elapsed=11.803s rounds=95 cases=3800 compared=3800 skipped=0 div=0
+progress: elapsed=12.455s rounds=100 cases=4000 compared=4000 skipped=0 div=0
+progress: elapsed=13.074s rounds=105 cases=4200 compared=4200 skipped=0 div=0
+progress: elapsed=13.69s rounds=110 cases=4400 compared=4400 skipped=0 div=0
+progress: elapsed=14.294s rounds=115 cases=4600 compared=4600 skipped=0 div=0
+progress: elapsed=14.914s rounds=120 cases=4800 compared=4800 skipped=0 div=0
+progress: elapsed=15.593s rounds=125 cases=5000 compared=5000 skipped=0 div=0
+progress: elapsed=16.217s rounds=130 cases=5200 compared=5200 skipped=0 div=0
+progress: elapsed=16.834s rounds=135 cases=5400 compared=5400 skipped=0 div=0
+progress: elapsed=17.435s rounds=140 cases=5600 compared=5600 skipped=0 div=0
+progress: elapsed=18.033s rounds=145 cases=5800 compared=5800 skipped=0 div=0
+progress: elapsed=18.646s rounds=150 cases=6000 compared=6000 skipped=0 div=0
+progress: elapsed=19.226s rounds=155 cases=6200 compared=6200 skipped=0 div=0
+progress: elapsed=19.837s rounds=160 cases=6400 compared=6400 skipped=0 div=0
+progress: elapsed=20.416s rounds=165 cases=6600 compared=6600 skipped=0 div=0
+progress: elapsed=21.089s rounds=170 cases=6800 compared=6800 skipped=0 div=0
+progress: elapsed=21.747s rounds=175 cases=7000 compared=7000 skipped=0 div=0
+progress: elapsed=22.359s rounds=180 cases=7200 compared=7200 skipped=0 div=0
+progress: elapsed=22.998s rounds=185 cases=7400 compared=7400 skipped=0 div=0
+progress: elapsed=23.953s rounds=190 cases=7600 compared=7600 skipped=0 div=0
+progress: elapsed=24.564s rounds=195 cases=7800 compared=7800 skipped=0 div=0
+progress: elapsed=25.22s rounds=200 cases=8000 compared=8000 skipped=0 div=0
+progress: elapsed=25.813s rounds=205 cases=8200 compared=8200 skipped=0 div=0
+progress: elapsed=26.429s rounds=210 cases=8400 compared=8400 skipped=0 div=0
+progress: elapsed=27.04s rounds=215 cases=8600 compared=8600 skipped=0 div=0
+progress: elapsed=27.702s rounds=220 cases=8800 compared=8800 skipped=0 div=0
+progress: elapsed=28.308s rounds=225 cases=9000 compared=9000 skipped=0 div=0
+progress: elapsed=28.9s rounds=230 cases=9200 compared=9200 skipped=0 div=0
+progress: elapsed=29.478s rounds=235 cases=9400 compared=9400 skipped=0 div=0
+progress: elapsed=30.132s rounds=240 cases=9600 compared=9600 skipped=0 div=0
+progress: elapsed=30.813s rounds=245 cases=9800 compared=9800 skipped=0 div=0
+progress: elapsed=31.444s rounds=250 cases=10000 compared=10000 skipped=0 div=0
+progress: elapsed=32.186s rounds=255 cases=10200 compared=10200 skipped=0 div=0
+progress: elapsed=32.863s rounds=260 cases=10400 compared=10400 skipped=0 div=0
+progress: elapsed=33.472s rounds=265 cases=10600 compared=10600 skipped=0 div=0
+progress: elapsed=34.062s rounds=270 cases=10800 compared=10800 skipped=0 div=0
+progress: elapsed=34.689s rounds=275 cases=11000 compared=11000 skipped=0 div=0
+progress: elapsed=35.374s rounds=280 cases=11200 compared=11200 skipped=0 div=0
+progress: elapsed=36.003s rounds=285 cases=11400 compared=11400 skipped=0 div=0
+progress: elapsed=36.652s rounds=290 cases=11600 compared=11600 skipped=0 div=0
+progress: elapsed=37.278s rounds=295 cases=11800 compared=11800 skipped=0 div=0
+progress: elapsed=37.918s rounds=300 cases=12000 compared=12000 skipped=0 div=0
+progress: elapsed=38.513s rounds=305 cases=12200 compared=12200 skipped=0 div=0
+progress: elapsed=39.096s rounds=310 cases=12400 compared=12400 skipped=0 div=0
+progress: elapsed=39.705s rounds=315 cases=12600 compared=12600 skipped=0 div=0
+progress: elapsed=40.31s rounds=320 cases=12800 compared=12800 skipped=0 div=0
+progress: elapsed=40.936s rounds=325 cases=13000 compared=13000 skipped=0 div=0
+progress: elapsed=41.549s rounds=330 cases=13200 compared=13200 skipped=0 div=0
+progress: elapsed=42.247s rounds=335 cases=13400 compared=13400 skipped=0 div=0
+progress: elapsed=42.862s rounds=340 cases=13600 compared=13600 skipped=0 div=0
+progress: elapsed=43.528s rounds=345 cases=13800 compared=13800 skipped=0 div=0
+progress: elapsed=44.089s rounds=350 cases=14000 compared=14000 skipped=0 div=0
+progress: elapsed=44.708s rounds=355 cases=14200 compared=14200 skipped=0 div=0
+progress: elapsed=45.361s rounds=360 cases=14400 compared=14400 skipped=0 div=0
+progress: elapsed=45.957s rounds=365 cases=14600 compared=14600 skipped=0 div=0
+progress: elapsed=46.543s rounds=370 cases=14800 compared=14800 skipped=0 div=0
+progress: elapsed=47.178s rounds=375 cases=15000 compared=15000 skipped=0 div=0
+progress: elapsed=47.839s rounds=380 cases=15200 compared=15200 skipped=0 div=0
+progress: elapsed=48.555s rounds=385 cases=15400 compared=15400 skipped=0 div=0
+progress: elapsed=49.194s rounds=390 cases=15600 compared=15600 skipped=0 div=0
+progress: elapsed=49.868s rounds=395 cases=15800 compared=15800 skipped=0 div=0
+progress: elapsed=50.603s rounds=400 cases=16000 compared=16000 skipped=0 div=0
+progress: elapsed=51.178s rounds=405 cases=16200 compared=16200 skipped=0 div=0
+progress: elapsed=51.81s rounds=410 cases=16400 compared=16400 skipped=0 div=0
+progress: elapsed=52.442s rounds=415 cases=16600 compared=16600 skipped=0 div=0
+progress: elapsed=53.017s rounds=420 cases=16800 compared=16800 skipped=0 div=0
+progress: elapsed=53.665s rounds=425 cases=17000 compared=17000 skipped=0 div=0
+progress: elapsed=54.291s rounds=430 cases=17200 compared=17200 skipped=0 div=0
+progress: elapsed=54.865s rounds=435 cases=17400 compared=17400 skipped=0 div=0
+progress: elapsed=55.45s rounds=440 cases=17600 compared=17600 skipped=0 div=0
+progress: elapsed=56.098s rounds=445 cases=17800 compared=17800 skipped=0 div=0
+progress: elapsed=56.681s rounds=450 cases=18000 compared=18000 skipped=0 div=0
+progress: elapsed=57.301s rounds=455 cases=18200 compared=18200 skipped=0 div=0
+progress: elapsed=57.879s rounds=460 cases=18400 compared=18400 skipped=0 div=0
+progress: elapsed=58.645s rounds=465 cases=18600 compared=18600 skipped=0 div=0
+progress: elapsed=59.251s rounds=470 cases=18800 compared=18800 skipped=0 div=0
+progress: elapsed=59.9s rounds=475 cases=19000 compared=19000 skipped=0 div=0
 
 === summary ===
 elapsed:      1m0s (requested)
-rounds:       288
-cases:        11520
-compared:     11520
+rounds:       476
+cases:        19040
+compared:     19040
 skipped_err:  0 (Node threw; not counted as div)
 divergences:  0
-finished:     2026-08-01T13:03:57Z
+finished:     2026-08-01T14:10:35Z
 result:       PASS (zero divergences on shared MatchList API)

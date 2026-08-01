@@ -12,6 +12,7 @@
 # Editor / OS
 .DS_Store
 .idea/
-.vscode/
 *.swp
 *~
+config.bat
+node_modules
