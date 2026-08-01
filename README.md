@@ -1,13 +1,17 @@
 # minimatch (Go)
 
+[![ci](https://github.com/benjaminnkem/minimatch-go/actions/workflows/ci.yml/badge.svg)](https://github.com/benjaminnkem/minimatch-go/actions/workflows/ci.yml)
+
 Idiomatic Go port of [isaacs/minimatch](https://github.com/isaacs/minimatch): bash-style glob matching used across the npm ecosystem.
 
-The TypeScript tree in `../minimatch` is the behavioural specification. This package aims for **observable parity** (options, edge cases, ordering), not a line-by-line translation.
+The TypeScript tree in `../minimatch` (when present) is the behavioural specification. This package aims for **observable parity** (options, edge cases, ordering), not a line-by-line translation.
+
+**Status:** `v0.1.0` — usable library API with Node differential coverage (see [CHANGELOG](./CHANGELOG.md)).
 
 ## Install
 
 ```bash
-go get github.com/benjaminnkem/minimatch-go
+go get github.com/benjaminnkem/minimatch-go@v0.1.0
 ```
 
 ## Quick start
