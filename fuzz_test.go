@@ -75,8 +75,9 @@ func TestFuzzDifferentialBatch(t *testing.T) {
 		for j := range files {
 			files[j] = randomPath(rng, 1+rng.Intn(20))
 		}
-		o := Options{}
-		om := map[string]any{}
+		// Force POSIX for parity with Node default / fixtures (see differential_test).
+		o := Options{Platform: PlatformLinux}
+		om := map[string]any{"platform": "linux"}
 		if rng.Intn(2) == 0 {
 			o.Dot = true
 			om["dot"] = true

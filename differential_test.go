@@ -38,6 +38,12 @@ func loadPatternCases(t *testing.T) []patternCase {
 
 func optionsFromJSON(m map[string]any) Options {
 	var o Options
+	// patterns.js / Node fixtures assume POSIX: backslash is an escape, not a
+	// path separator. On Windows CI HostPlatform is win32, which rewrites `\`
+	// in paths to `/` and breaks cases like pattern `\`, files `["\"]`.
+	// Default to linux unless the fixture explicitly sets platform.
+	// (Upstream minimatch also notes these backslash tests fail on Windows.)
+	o.Platform = PlatformLinux
 	if m == nil {
 		return o
 	}
@@ -73,7 +79,7 @@ func optionsFromJSON(m map[string]any) Options {
 			o.OptimizationLevel = &i
 		}
 	}
-	if v, ok := m["platform"].(string); ok {
+	if v, ok := m["platform"].(string); ok && v != "" {
 		o.Platform = Platform(v)
 	}
 	if v, ok := m["windowsNoMagicRoot"]; ok {
@@ -147,6 +153,20 @@ func TestDifferentialPatterns(t *testing.T) {
 		t.Fatalf("%d / %d pattern cases differed from Node oracle", failed, len(cases))
 	}
 	t.Logf("ok: %d cases match Node minimatch.match", len(cases))
+}
+
+// TestBackslashLiteralPOSIX documents patterns.js cases that use `\` as a
+// literal/escape character. They require a non-win32 platform.
+func TestBackslashLiteralPOSIX(t *testing.T) {
+	opts := Options{Platform: PlatformLinux}
+	ok, err := Match(`\`, `\`, opts)
+	if err != nil || !ok {
+		t.Fatalf(`pattern \ vs file \: %v %v`, ok, err)
+	}
+	ok, err = Match(`\`, `[\\]`, opts)
+	if err != nil || !ok {
+		t.Fatalf(`pattern [\\] vs file \: %v %v`, ok, err)
+	}
 }
 
 // TestDifferentialTrickyNegations loads the full test/tricky-negations.js
