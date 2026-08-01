@@ -1,0 +1,8 @@
+.git
+.git/**
+**/.DS_Store
+**/testdata/fuzz
+**/*_fuzz.zip
+.idea
+.vscode
+*.md~
