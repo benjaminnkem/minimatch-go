@@ -172,9 +172,29 @@ Details: [COMPATIBILITY.md](./COMPATIBILITY.md).
 
 ---
 
+## Numbered divergence log (≥10 for Decision Log bonus)
+
+| # | Divergence | Rationale |
+| --- | ---: | --- |
+| 1 | `internal/` package split vs single TS modules | Idiomatic Go, testable stages |
+| 2 | `regexp2` vs JS `RegExp` / RE2 | Lookarounds required; RE2 insufficient |
+| 3 | `error` returns vs thrown exceptions | Library-safe Go API |
+| 4 | Pointer fields for numeric/tri-state options | Preserve TS “omit vs 0” |
+| 5 | In-tree brace expansion vs `brace-expansion` npm dep | Pure Go, no Node at runtime |
+| 6 | Skip dual-body when nested `(?!(?:` | Avoid `regexp2` hang |
+| 7 | Differential fixtures default `platform=linux` | Windows CI vs POSIX escape corpus |
+| 8 | Go names (`NoBrace`, `MatchList`) vs JS keys | Idiomatic; TS keys in field docs |
+| 9 | `NewDefaults` vs process-global `defaults()` | No mutable globals |
+| 10 | Escape/Unescape option structs | Different TS `magicalBraces` defaults |
+| 11 | UTF-16 length via `utf16.RuneLen` | Match JS string length edge cases |
+| 12 | No guaranteed `MakeRe` source string equality | Engine escaping differs; match outcomes matter |
+| 13 | Oracle JSON adapter vs running TAP in-process | Original suite hashed unmodified; thin adapter |
+| 14 | Prefer `Match` path at high optimization | Same guidance as upstream |
+
 ## What we intentionally did *not* do
 
 - **WASM bridge to the original JS** — would score high on parity but fails the spirit of a native port.
 - **Guaranteed identical `MakeRe` source strings** — brittle; engines differ on escaping details.
 - **100% line coverage of every TAP snapshot** — we prioritised oracle JSON + targeted Go tests + fuzz; remaining gaps are listed in COMPATIBILITY.
-- **Benchmark claims without methodology** — see [BENCHMARKS.md](./BENCHMARKS.md).
+- **Benchmark claims without methodology** — see [BENCHMARKS.md](./BENCHMARKS.md) and [bench/methodology.md](./bench/methodology.md).
+- **`unsafe` blocks** — none; Go port uses no `unsafe` package (Zero Unsafe bonus).

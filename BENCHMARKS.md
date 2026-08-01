@@ -109,8 +109,40 @@ docker run --rm minimatch-port bench
 
 (See root `Dockerfile` — `bench` target runs the same `go test -bench` command inside the image. CPU model will differ; always re-record hardware when publishing new numbers.)
 
-## Future work (not claimed yet)
+## Comparative Node vs Go (Port Mortem)
 
-- Side-by-side harness vs `minimatch/benchmark.js` with identical pattern/path sets.
+```bash
+make bench-compare   # → bench/results.json
+```
+
+Methodology: [bench/methodology.md](./bench/methodology.md). Full machine dump: [bench/results.json](./bench/results.json).
+
+### Snapshot (2026-08-01, i7-9750H, darwin/amd64)
+
+| Scenario | Node mean ns/op | Go mean ns/op | Speedup (node/go) |
+| --- | ---: | ---: | ---: |
+| brace_expand | 11 571 | 5 137 | **2.25×** Go |
+| match_oneshot | 13 460 | 12 724 | 1.06× Go |
+| match_compiled | 1 060 | 1 195 | 0.89× (Node faster) |
+| match_extglob | 583 | 895 | 0.65× (Node faster) |
+| corpus | 19 895 | 31 462 | 0.63× (Node faster) |
+| match_complex_compile | 128 765 | 125 573 | 1.03× Go |
+
+| Cold start (median of 5) | ms |
+| --- | ---: |
+| Node (load + 1 Match) | ~121 |
+| Go binary (+ 1 Match) | **~10** |
+
+| Memory after workload | |
+| --- | ---: |
+| Node RSS | ~62 MB |
+| Node heapUsed | ~10 MB |
+| Go HeapAlloc | ~1.4 MB |
+
+**Honest reading:** Go wins cold start and brace expand; V8 is still faster on several compiled hot loops. Prefer compile-once `NewMinimatch` in production. Numbers are single-machine; re-run `make bench-compare` on judge hardware.
+
+## Future work
+
 - Allocation profiles (`-memprofile`) for compile path.
 - Throughput under parallel `b.RunParallel` for server-style matchers.
+- Multi-run statistical design across machines.

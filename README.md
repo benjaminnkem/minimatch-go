@@ -48,17 +48,31 @@ Requires **Go 1.23+**.
 
 ## How to build
 
-```bash
-go build ./...
-```
-
-Docker (from this repository):
+**One-command build (judges):**
 
 ```bash
 docker build -t minimatch-port .
+docker run --rm minimatch-port check
 ```
 
-JSON differential tests run inside the image **without** Node. Optional live Node oracles need a sibling reference tree (see [TESTING.md](./TESTING.md)).
+Local library build:
+
+```bash
+go build .
+```
+
+JSON differential tests run inside the image **without** Node. Optional live Node oracles / `make fuzz-diff` need a sibling `../minimatch` tree (see [TESTING.md](./TESTING.md)).
+
+### Port Mortem submission map
+
+| Deliverable | Location |
+| --- | --- |
+| Track / kickoff pin | [`.port-mortem.toml`](./.port-mortem.toml) |
+| Original suite hashes | [`tests/original/`](./tests/original/) |
+| DECISIONS | [`DECISIONS.md`](./DECISIONS.md) |
+| Differential fuzz (60s+) | `make fuzz-diff` → [`fuzz/log.txt`](./fuzz/log.txt) |
+| Comparative benches | `make bench-compare` → [`bench/results.json`](./bench/results.json) |
+| Demo video script | [`DEMO_VIDEO.md`](./DEMO_VIDEO.md) |
 
 ---
 
@@ -128,7 +142,9 @@ make check           # vet + test + differential
 make test
 make differential    # 196 + 46 Node-oracle fixtures (committed JSON)
 make fuzz            # native fuzz ~10s
+make fuzz-diff       # 60s Node↔Go differential → fuzz/log.txt
 make bench
+make bench-compare   # Node vs Go p99/startup → bench/results.json
 ```
 
 Docker:

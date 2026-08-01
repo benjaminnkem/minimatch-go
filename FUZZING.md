@@ -125,6 +125,18 @@ When Node throws and Go returns an error (or non-match), the batch test **skips 
 
 Fuzzing does **not** replace the oracle suites; it complements them.
 
+## Port Mortem differential fuzz (60s+ bonus)
+
+Harness: `fuzz/harness.go` — compares `MatchList` against Node `minimatch.match` via `testdata/oracle.mjs`.
+
+```bash
+# requires Node + built ../minimatch
+make fuzz-diff
+# equivalent: go run ./fuzz -duration=60s -out=fuzz/log.txt
+```
+
+Success criterion for **Differential Fuzz Survivor (+5):** ≥60 continuous seconds, **zero divergences** on the shared API, log at `fuzz/log.txt`.
+
 ## Future improvements
 
 - Persist a checked-in seed corpus under `testdata/fuzz/FuzzMatchNoPanic/`.

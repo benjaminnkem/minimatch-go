@@ -1,0 +1,38 @@
+# Port Mortem 2026 — submission metadata
+# https://coderesurrection.com/2026/
+
+track = "C"
+track_name = "TypeScript → Go"
+event = "Port Mortem"
+event_url = "https://coderesurrection.com/2026/"
+dates = "2026-07-31 .. 2026-08-03"
+
+source_language = "TypeScript"
+target_language = "Go"
+
+source_repo = "https://github.com/isaacs/minimatch"
+source_commit = "ded1bbd01beca62a5978bc1650ed0a1ccf9039d5"
+source_version = "10.2.6"
+source_license = "BlueOak-1.0.0"
+
+port_module = "github.com/benjaminnkem/minimatch-go"
+port_repo = "https://github.com/benjaminnkem/minimatch-go"
+port_tag = "v0.1.0"
+port_license = "BlueOak-1.0.0"
+
+# Kickoff pin: SHA-256 of concatenated contents of all files under original test/
+# (isaacs/minimatch@ded1bbd, computed 2026-08-01). See tests/original/SHA256SUMS.
+kickoff_test_suite_content_sha256 = "660356c6ed36073248173d61b79134fbc02b6a1b7af2532102a1b55c26be7515"
+
+# SHA-256 of the sorted per-file sha256 lines for test/ + src/ + package.json
+# (manifest integrity). See tests/original/SHA256SUMS.
+kickoff_manifest_sha256 = "8eb48929c24662f5947a3adac22a35106331336619f2b0ae70bdc9ba57220eb1"
+
+# One-command build (from this repository root)
+build_command = "docker build -t minimatch-port ."
+verify_command = "docker run --rm minimatch-port check"
+# Local without Docker:
+#   make check
+
+# Differential fuzz (bonus): make fuzz-diff  → fuzz/log.txt
+# Comparative benches:        make bench-compare → bench/results.json

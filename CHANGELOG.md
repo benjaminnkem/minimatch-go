@@ -31,6 +31,9 @@ First tagged release of the Go port.
 
 - In-repo documentation: `README`, `DECISIONS`, `PORT_AUDIT`, `BENCHMARKS`, `BUGS`, `FUZZING`, `COMPATIBILITY`, `ARCHITECTURE`, `TESTING`
 - `Dockerfile` + `Makefile` for judge-friendly builds
+- `.port-mortem.toml`, `tests/original/` kickoff hashes, `DEMO_VIDEO.md`
+- `make fuzz-diff` → `fuzz/log.txt` (60s differential, zero divergences)
+- `make bench-compare` → `bench/results.json` (Node vs Go, p99 + startup)
 
 ### Notes
 
